@@ -1,0 +1,44 @@
+Getting output for foodweb in text format:
+
+Prep:
+Install package
+install.packages("mvbutils")
+
+Printing out matrix to R Studio Console (make sure you’re in the q_Super_Admin_R_Codes dir)
+library(mvbutils)
+source(“q_Functions.R”)
+file_Format_Check_Pdl()
+fw <- foodweb()
+print(fw[[“funmat”]])
+
+Outputting to file
+library(mvbutils)
+source(“q_Functions.R”)
+file_Format_Check_Pdl() #shows error w/ working_Directory - we can fix later
+fw<- foodweb()
+zz<-file(“matrixOutput.txt”,open=”wt”) #call this whatever you want
+sink(zz,type=”output”)
+print(fw[[“funmat”]])
+sink()
+
+This was my attempt at a full script, it works if you run it in R studio but not on terminal.  
+(Make sure to highlight all text in file then click run to run whole function - I’ll look at it later too)
+
+library(mvbutils)
+source("q_Functions.R")
+setwd(".")
+working_Directory<-getwd()
+file_Format_Check_Pdl()
+fw<-foodweb()
+print("getting to zz")
+zz<-file("matrixOutput2.txt",open="wt")
+sink(zz,type="output")
+print(fw[["funmat"]])
+sink()
+
+
+
+
+
+
+
