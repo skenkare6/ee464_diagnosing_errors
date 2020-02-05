@@ -1,0 +1,12 @@
+library(mvbutils)
+source("q_Functions.R")
+setwd(".")
+working_Directory<-getwd()
+file_Format_Check_Pdl()
+fw<-foodweb()
+print("getting to zz")
+zz<-file("matrixOutput2.txt",open="wt")
+sink(zz,type="output")
+print(fw[["funmat"]])
+sink()
+
