@@ -18,10 +18,10 @@
   * As previously defined in the System Design Report
   * Test-to-source
     * Canyon
-    * John
-  * Git diffs/regression test selection
     * Saarila
+  * Git diffs/regression test selection
     * Janvi
+    * John
   * Source-to-test
     * Jennings
     * Michael
