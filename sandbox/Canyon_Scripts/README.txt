@@ -1,6 +1,6 @@
 How to run the script:
 
-Make sure you're in the Canyon_Scripts folder that this readme is in
+Make sure you've placed Canyon_Scripts folder in root of AnomalyDetection /anomalyDetection/AnomalyDetection/Canyon_Scripts
 
 Run python3 rscript.py
 
