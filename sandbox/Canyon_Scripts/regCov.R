@@ -1,0 +1,8 @@
+zz <- file("covReg.txt",open="wt")
+sink(zz,type="output")
+sink(zz,type="message")
+cat("*****Running Regular COVR print\n\n")
+print(cov)
+cat("\n*****Closing sink connection")
+sink()
+sink()

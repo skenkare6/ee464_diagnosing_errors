@@ -1,0 +1,7 @@
+*****Running COVR Function print
+
+Coverage: 34.96%
+AnomalyDetectionVec: 34.96%
+
+*****Closing sink connectionWarning message:
+In sink() : no sink to remove

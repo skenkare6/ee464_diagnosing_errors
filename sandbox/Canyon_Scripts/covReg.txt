@@ -1,0 +1,10 @@
+*****Running Regular COVR print
+
+AnomalyDetection Coverage: 73.76%
+R/date_utils.R: 41.94%
+R/ts_anom_detection.R: 72.44%
+R/vec_anom_detection.R: 77.24%
+R/plot_utils.R: 79.07%
+R/detect_anoms.R: 84.31%
+
+*****Closing sink connection
