@@ -4,7 +4,8 @@ import time
 from datetime import date
 
 #Switch directory to root of code repo
-os.chdir("..")
+canyon_dir=os.getcwd()
+os.chdir("../anomalyDetection/AnomalyDetection/")
 cwd=os.getcwd()
 
 #Get time information for post script of match
@@ -27,7 +28,7 @@ test_arr=os.listdir(r_test_dir)
 for entry in source_arr:
     for entry1 in test_arr:
         name=entry+"<=====>"+entry1+"______"+post
-        subprocess.call(['Rscript','./Canyon_Scripts/args.R',entry,entry1,name])
+        subprocess.call(['Rscript',canyon_dir+"/args.R",entry,entry1,name,canyon_dir])
         print(entry+"<=====>"+entry1+"______"+post)
         
 

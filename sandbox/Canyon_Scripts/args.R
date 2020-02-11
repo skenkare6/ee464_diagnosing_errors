@@ -6,6 +6,7 @@ args <- commandArgs()
 source_file<-args[6]
 test_file<-args[7]
 naming<-args[8]
+canyon_dir<-args[9]
 
 source_path<-paste("./R/",source_file,sep="")
 test_path<-paste("./tests/testthat/",test_file,sep="")
@@ -25,10 +26,10 @@ print(getwd())
 cov<-file_coverage(source_path,test_path)
 print("after")
 
+#print("******************")
+#print(paste(canyon_dir,"/output/",sep=""))
 
-#print(paste(naming,".txt",sep=""))
-
-setwd("./Canyon_Scripts/output/")
+setwd(paste(canyon_dir,"/output/",sep=""))
 
 yy <- file(print(paste(naming,".txt",sep="")),open="wt")
 sink(yy,type="output")
