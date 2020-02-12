@@ -9,6 +9,7 @@ class Database:
                                           cursorclass=pymysql.cursors.DictCursor)
         self.cursor = self.connection.cursor()
 
+    # TODO: Make this not SQL injectable
     def query(self, query_string):
         with self.connection.cursor() as cursor:
             cursor.execute(query_string)
