@@ -29,7 +29,7 @@ for entry in source_arr:
     for entry1 in test_arr:
         name=entry+"<=====>"+entry1+"______"+post
         subprocess.call(['Rscript',canyon_dir+"/args.R",entry,entry1,name,canyon_dir])
-        print(entry+"<=====>"+entry1+"______"+post)
+        #print(entry+"<=====>"+entry1+"______"+post)
         
 
 
