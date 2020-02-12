@@ -10,4 +10,23 @@ class Database:
         self.cursor = self.connection.cursor()
 
     def query(self, query_string):
-        return self.cursor.execute(query_string)
+        with self.connection.cursor() as cursor:
+            cursor.execute(query_string)
+
+            if self.is_effectful_query(query_string):
+                self.connection.commit()
+                return None
+            else:
+                return cursor.fetchall()
+
+    def is_effectful_query(self, query_string):
+        downcased_query_string = query_string.lower()
+        effectful_commands = ["update", "delete", "insert"]
+
+        is_effectful = False
+
+        for command in effectful_commands:
+            is_effectful = is_effectful or (command in downcased_query_string)
+
+        return is_effectful
+
