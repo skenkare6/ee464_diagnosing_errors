@@ -4,30 +4,15 @@
 ### Setting up the MySQL databases
 
 1. Install and log into mysql
-2. Run the following if you haven't already:
+2. Copy and paste the contents of `schema.sql` into the commandline
+3. If there are any errors, figure out what the last executed command
+   was and repeat step 2 with the commands that weren't ran.
+
+Alternatively, install `docker` and `docker-compose`, and run:
 
 ```
-create database production;
-create database test;
+sh start_mysql.sh
 ```
-
-3. Select the `production` database:
-
-```
-use production;
-```
-
-4. Copy and paste the contents of `schema.sql` into the commandline.
-5. Verify all of the tables specified in the `schema.sql` file are
-   created via: `show tables;`.
-
-6. Select the `test` database:
-
-```
-use test;
-```
-
-7. Repeat steps 4 and 5 and you're done.
 
 ## Design from 2020-02-05 meeting
 
