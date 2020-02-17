@@ -47,12 +47,14 @@ def getRFunctionCalls(functions):
 def parseRTests():
     curString = ""
     status = 0 # not found anything yet
-    fullTests = []
+    # fullTests = []
+    testMapping = dict()
     for filename in os.listdir("AnomalyDetection/tests/testthat"):
         if filename.endswith(".R") and filename.startswith("test-"):
             with open(os.path.join("AnomalyDetection/tests/testthat/", filename)) as fp:
             # content = fp.read()
             # print(content)
+                count = 0
                 line = fp.readline()
                 while line:
                 # print(line)
@@ -63,22 +65,29 @@ def parseRTests():
                         curString += line
                     if curString.count('(') == curString.count(')') and status == 1:
                         status = 0
-                        fullTests.append(curString)
+                        #fullTests.append(curString)
+                        newTestFilename = filename[:-2] + "-" + str(count) + ".R"
+                        text_file = open(newTestFilename, "w")
+                        text_file.write(curString)
+                        text_file.close()
+                        testMapping[newTestFilename] = curString
                         curString = ""
+                        count += 1
                     line = fp.readline()
     # nestedExpr('(',')').parseString(content).asList()
     # print(nestedExpr)
     # for test in fullTests:
     #    print("TEST")
     #    print(test)
-    return fullTests
+    # return fullTests
+    return testMapping
 
 def mapTestsToFunctions(mapping, tests):
     testMapping = dict()
-    for test in tests:
+    for test in tests.keys():
         functions = set()
         for func in mapping.keys():
-            if func in test:
+            if func in tests[test]:
                 functions.add(func)
                 functions.update(mapping[func])
         testMapping[test] = functions
