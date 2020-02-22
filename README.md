@@ -29,6 +29,15 @@ use test;
 
 7. Repeat steps 4 and 5 and you're done.
 
+### Fixes for issues with Python or mysql
+
+Issue: pymysql.err.InternalError: (1698, "Access denied for user 'root'@'localhost'")
+Solution: Login into to mysql and enter the following lines.
+   mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+   mysql> FLUSH PRIVILEGES;
+   
+
+
 ## Design from 2020-02-05 meeting
 
 * Database
