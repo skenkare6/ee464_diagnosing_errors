@@ -31,7 +31,7 @@ use test;
 
 ### Fixes for issues with Python or mysql
 
-Issue: pymysql.err.InternalError: (1698, "Access denied for user 'root'@'localhost'").
+Issue: pymysql.err.InternalError: (1698, "Access denied for user 'root'@'localhost'"). <br/>
 Solution: Login into to mysql and enter the following lines.
 
 ```
