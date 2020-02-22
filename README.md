@@ -38,7 +38,12 @@ Solution: Login into to mysql and enter the following lines.
 mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
 mysql> FLUSH PRIVILEGES;
 ```   
-
+Issue: Missing modules or other general python errors. <br/>
+Solution: 
+   Ensure you are using the following python tools:
+      1. python3
+      2. pymysql
+      3. pytest-3
 
 ## Design from 2020-02-05 meeting
 
