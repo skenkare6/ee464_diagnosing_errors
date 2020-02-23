@@ -18,6 +18,11 @@ class SourceFile():
         return json.dumps(dict, indent=1)
 
     @staticmethod
+    def create(filepath, filetype):
+        pass # TODO
+
+
+    @staticmethod
     def get_by_file_path(filepath):
         db = Database.getInstance()
 
