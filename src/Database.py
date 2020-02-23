@@ -9,6 +9,10 @@ class Database:
                                           cursorclass=pymysql.cursors.DictCursor)
         self.cursor = self.connection.cursor()
 
+    @staticmethod
+    def getInstance():
+        return Database('test','root','')
+
     # TODO: Make this not SQL injectable
     def query(self, query_string):
         with self.connection.cursor() as cursor:
