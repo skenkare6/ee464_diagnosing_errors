@@ -46,3 +46,7 @@ def test_to_json_string_has_file_path_as_top_level(with_database):
 
     assert top_level_keys == set(["one.r"])
 
+def test_create(with_database):
+    sourceFile = SourceFile.create("three.r", 1, ".")
+    assert sourceFile.filepath == "three.r" and sourceFile.filetype == 1
+
