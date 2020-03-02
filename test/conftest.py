@@ -12,6 +12,7 @@ def with_database():
 
     function1_id = create_function(file1_id, "doMath")
     function2_id = create_function(file2_id, "doOtherMath")
+    function3_id = create_function(file1_id, "doSomeMoreMath")
 
     test1_id = create_test_case(file1_id, "first_test")
     test2_id = create_test_case(file1_id, "second_test")
