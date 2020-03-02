@@ -18,7 +18,8 @@ def test_get_function_names_from_test_name(with_database):
 
 def test_sets_file_path(with_database):
     sourceFile = SourceFile.get_by_file_path("one.r")
-    assert sourceFile.filepath == "one.r"
+
+    assert sourceFile.filePath == "one.r"
 
 def test_behaviour_on_not_found_filepath(with_database):
     sourceFile = SourceFile.get_by_file_path("cheese.r")
@@ -38,7 +39,6 @@ def test_to_json_string_has_test_names(with_database):
 
     assert set(sourceFile.testCaseNames) == set(["first_test","second_test"])
 
-
 def test_to_json_string_has_file_path_as_top_level(with_database):
     sourceFile = SourceFile.get_by_file_path("one.r")
     dict = json.loads(sourceFile.to_json_string())
@@ -48,5 +48,6 @@ def test_to_json_string_has_file_path_as_top_level(with_database):
 
 def test_create(with_database):
     sourceFile = SourceFile.create("three.r", 1, ".")
-    assert sourceFile.filepath == "three.r" and sourceFile.filetype == 1
+
+    assert sourceFile.filePath == "three.r" and sourceFile.fileType == 1
 
