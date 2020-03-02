@@ -14,6 +14,34 @@ Alternatively, install `docker` and `docker-compose`, and run:
 sh start_mysql.sh
 ```
 
+4. Copy and paste the contents of `schema.sql` into the commandline.
+5. Verify all of the tables specified in the `schema.sql` file are
+   created via: `show tables;`.
+
+6. Select the `test` database:
+
+```
+use test;
+```
+
+7. Repeat steps 4 and 5 and you're done.
+
+### Fixes for issues with Python or mysql
+
+Issue: pymysql.err.InternalError: (1698, "Access denied for user 'root'@'localhost'"). <br/>
+Solution: Login into to mysql and enter the following lines.
+
+```
+mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
+mysql> FLUSH PRIVILEGES;
+```   
+Issue: Missing modules or other general python errors. <br/>
+Solution: 
+* Ensure you are using the following python tools:
+  * python3
+  * pymysql
+  * pytest-3
+
 ## Design from 2020-02-05 meeting
 
 * Database
