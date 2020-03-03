@@ -153,8 +153,8 @@ def mapTestsToFunctions(mapping, tests):
                 functions.update(mapping[func])
         testMapping[test] = functions
 
-    #for test in testMapping.keys():
-        #print(test + " calls " + str(testMapping[test]))
+    for test in testMapping.keys():
+        print(test + " calls " + str(testMapping[test]))
 
     for test in testMapping.keys():
         for func in testMapping[test]:
@@ -170,8 +170,13 @@ def mapTestsToFunctions(mapping, tests):
                 results = cur.fetchall()
                 testCaseID = results[0][0]
                 
-                sql = "INSERT INTO `RCodeToTestCases` (`functionID`, `testCaseID`) VALUES (%s, %s)"
-                con.cursor().execute(sql, (str(functionID), str(testCaseID)))
+                selectSql = "SELECT * FROM `RCodeToTestCases` WHERE `functionID` = %s AND testCaseID = %s"
+                cur.execute(selectSql, (str(functionID), str(testCaseID)))
+                results = cur.fetchall()
+                
+                if not results:
+                    sql = "INSERT INTO `RCodeToTestCases` (`functionID`, `testCaseID`) VALUES (%s, %s)"
+                    con.cursor().execute(sql, (str(functionID), str(testCaseID)))
     
     return testMapping
 
