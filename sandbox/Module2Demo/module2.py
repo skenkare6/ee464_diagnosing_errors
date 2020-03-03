@@ -4,18 +4,24 @@ from subprocess import Popen
 import pymysql.cursors
 
 subprocess.call('./wrapper.sh', shell=True)
+print("\nConnecting to database...")
 db = pymysql.connect(host = "localhost", database='test', user = "root", passwd = "S4ang4ai!")
 cur = db.cursor()
 
+functionList = []
+testList = []
 with open('changedFunctions.txt', 'r') as pr:
-    print("Functions that were changed:")
+    #print("Functions that were changed:")
     for line in pr.readlines():
         line = line.strip()
-        print(line)
+        functionList.append(line)
+        #print(line)
     pr.close()
 
 with open('changedFunctions.txt', 'r') as fp:
-    print("\nTests to be run:")
+    print("\nUsing function name, find function ID in database")
+    print("Using function ID, find test ID that it maps to")
+    print("Using test ID, find the test name in database\n")
     for line in fp.readlines():
         line = line.strip()
         
@@ -32,7 +38,22 @@ with open('changedFunctions.txt', 'r') as fp:
         cur.execute(sql, result)
         result = cur.fetchall()
         result = result[0][0]
-        print(result)
+        testList.append(result)
+        #print(result)
     fp.close()
 cur.close()
 db.close()
+
+s = "{"
+for func in functionList:
+    s = s + "'" + func + "',"
+s = s[:-1]
+s = s + "}"
+print("The functions that have changed are: " + s)
+
+t = "{"
+for test in testList:
+    t = t + "'" + test + "',"
+t = t[:-1]
+t = t + "}"
+print("The tests to run are: " + t)

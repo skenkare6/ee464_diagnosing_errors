@@ -1,11 +1,13 @@
 #!/bin/bash
-rm changedFunctions.txt
+#rm changedFunctions.txt
+echo "Calling git diff on the Anomaly Detection project..."
+echo
 ./DiffLinesFunction.sh | while read entry
 do
 Rscript contextLineNumber.R $entry >> changedFunctions.txt
 done
 
-#echo "Functions that were changed:"
+echo "Parsing list of functions that have changed..."
 #cat changedFunctions.txt
 #echo
 #echo "Tests to be run:"
