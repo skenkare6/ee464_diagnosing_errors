@@ -4,45 +4,16 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../s
 from SourceFile import SourceFile
 from Database import Database
 
-def test_gets_the_test_names(with_database):
-    sourceFile = SourceFile.get_by_file_path("one.r")
-    expected = set(["first_test", "second_test"])
+import SourceToTest
+def test_gets_json(with_database):
+  json_report = json.loads(SourceToTest.getJson("one.r"))
+  assert set(json_report.keys()) == set(['one.r'])
 
-    assert expected == set(sourceFile.testCaseNames)
+  second_level_keys = set(json_report.get('one.r').keys())
+  assert second_level_keys == set(['tests', 'functions'])
 
-def test_get_function_names_from_test_name(with_database):
-    sourceFile = SourceFile.get_by_file_path("one.r")
-    expected = set(["doMath", "doSomeMoreMath"])
+  functions = set(json_report.get('one.r').get('functions'))
+  assert functions == set(['doMath', 'doMath', 'doSomeMoreMath'])
 
-    assert expected == set(sourceFile.functionNames)
-
-def test_sets_file_path(with_database):
-    sourceFile = SourceFile.get_by_file_path("one.r")
-    assert sourceFile.filepath == "one.r"
-
-def test_behaviour_on_not_found_filepath(with_database):
-    sourceFile = SourceFile.get_by_file_path("cheese.r")
-
-    assert len(sourceFile.testCaseNames) == 0
-    assert len(sourceFile.functionNames) == 0
-
-def test_to_json_string_has_function_names(with_database):
-    sourceFile = SourceFile.get_by_file_path("one.r")
-    dict = json.loads(sourceFile.to_json_string())
-
-    assert set(sourceFile.functionNames) == set(["doMath", "doSomeMoreMath"])
-
-def test_to_json_string_has_test_names(with_database):
-    sourceFile = SourceFile.get_by_file_path("one.r")
-    dict = json.loads(sourceFile.to_json_string())
-
-    assert set(sourceFile.testCaseNames) == set(["first_test","second_test"])
-
-
-def test_to_json_string_has_file_path_as_top_level(with_database):
-    sourceFile = SourceFile.get_by_file_path("one.r")
-    dict = json.loads(sourceFile.to_json_string())
-    top_level_keys = set(dict.keys())
-
-    assert top_level_keys == set(["one.r"])
-
+  tests = set(json_report.get('one.r').get('tests'))
+  assert tests == set(['first_test', 'second_test'])

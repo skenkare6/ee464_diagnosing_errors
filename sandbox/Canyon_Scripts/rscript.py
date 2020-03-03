@@ -22,14 +22,22 @@ r_test_dir=cwd+"/tests/testthat/"
 source_arr=os.listdir(r_source_dir)
 test_arr=os.listdir(r_test_dir)
 
+test_len = str(len(test_arr))
+source_len = str(len(source_arr))
+
+
 #rqqq=cwd+"/R/date_utils.R"
 #rddd=cwd+"/tests/testthat/test-ts.R"
 
-for entry in source_arr:
-    for entry1 in test_arr:
-        name=entry+"<=====>"+entry1+"______"+post
-        subprocess.call(['Rscript',canyon_dir+"/args.R",entry,entry1,name,canyon_dir])
-        #print(entry+"<=====>"+entry1+"______"+post)
+for test in test_arr:
+	#for source in source_arr:
+		#name=test+"<=====>"+source+"______"+post
+		subprocess.call(['Rscript',canyon_dir+"/args.R",test,canyon_dir,test_len,source_len])
+# for entry in source_arr:
+#     for entry1 in test_arr:
+#         name=entry+"<=====>"+entry1+"______"+post
+#         subprocess.call(['Rscript',canyon_dir+"/args.R",entry,entry1,name,canyon_dir])
+#         #print(entry+"<=====>"+entry1+"______"+post)
         
 
 
