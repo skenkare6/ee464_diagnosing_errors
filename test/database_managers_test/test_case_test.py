@@ -28,6 +28,27 @@ def test_get_by_name_and_file_id_not_exists(with_database):
 
   assert testCase is None
 
+def test_create_mapping_between_test_and_function(with_database):
+  file = SourceFile.get_by_file_path("one.r")
+  testCase = TestCase.create("apoijwdapoijwd", file.fileID)
+  function = Function.create("paoiwdjaowidj", file.fileID)
+
+  testCase.create_mapping(function)
+  function = Function.get_by_name_and_file_id(function.name, file.fileID)
+
+  assert testCase.name in function.testCaseNames
+
+def test_delete_mapping_between_test_and_function(with_database):
+  file = SourceFile.get_by_file_path("one.r")
+  testCase = TestCase.create("apoijwdapoijwd", file.fileID)
+  function = Function.create("paoiwdjaowidj", file.fileID)
+
+  testCase.create_mapping(function)
+  testCase.delete_mapping(function)
+  function = Function.get_by_name_and_file_id(function.name, file.fileID)
+
+  assert testCase.name not in function.testCaseNames
+
 def test_create(with_database):
   file = SourceFile.get_by_file_path("one.r")
   testCase = TestCase.create("someTest", file.fileID)

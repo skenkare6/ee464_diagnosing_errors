@@ -72,9 +72,12 @@ def create_link(function_id, test_case_id):
 
 def teardown():
     db = Database("test", "root", "")
+    db.query("SET foreign_key_checks = 0;")
     db.query("delete from RCodeToTestCases where 1=1;")
-    db.query("delete from RTestCases where 1=1;")
     db.query("delete from RFunctions where 1=1;")
+    db.query("delete from RTestCases where 1=1;")
     db.query("delete from RFiles where 1=1;")
     db.query("delete from Repositories where 1=1;")
+    db.query("SET foreign_key_checks = 1;")
+
 

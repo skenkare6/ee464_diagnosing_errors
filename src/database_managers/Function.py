@@ -1,8 +1,9 @@
 from Database import Database
 
 class Function():
-    def __init__(self, name, testCaseNames):
+    def __init__(self, name, functionID, testCaseNames):
         self.name = name
+        self.functionID = functionID
         self.testCaseNames = testCaseNames
 
     @staticmethod
@@ -19,7 +20,9 @@ class Function():
 
       if len(results) > 0:
         testCaseNames = [record['testCaseName'] for record in results if record['testCaseName']]
-        return Function(funcName, testCaseNames)
+        functionID = results[0].get('functionID', None) if len(results) > 0 else None
+
+        return Function(funcName, functionID, testCaseNames)
       else:
         return None
 
@@ -39,12 +42,14 @@ class Function():
       # For now, assume only one function with funcName
       if len(results) > 0:
         testCaseNames = [record['testCaseName'] for record in results if record['testCaseName']]
-        return Function(funcName, testCaseNames)
+        functionID = results[0].get('functionID', None) if len(results) > 0 else None
+
+        return Function(funcName, functionID, testCaseNames)
       else:
         return None
 
     @staticmethod
-    def create(fileID, functionName):
+    def create(functionName, fileID):
       db = Database.getInstance()
       query = "insert into RFunctions \
                 (fileID, functionName) values \

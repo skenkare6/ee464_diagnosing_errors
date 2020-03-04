@@ -2,10 +2,11 @@ from Database import Database
 import json
 
 class TestCase():
-  def __init__(self, name, functionsExercised, filesExercised, fileIdsExercised):
+  def __init__(self, id, name, functionsExercised, filesExercised, fileIdsExercised):
     self.filesExercised = filesExercised
     self.functionsExercised = functionsExercised
     self.fileIdsExercised = fileIdsExercised
+    self.testCaseID = id
     self.name = name
 
   def to_json(self):
@@ -14,6 +15,29 @@ class TestCase():
       "files": self.filesExercised
     }}
     return json.dumps(json_hash, indent=1)
+
+  def create_mapping(self, function):
+    if not function or not function.functionID:
+      return
+
+    db = Database.getInstance()
+    query = "insert into RCodeToTestCases \
+              (functionID, testCaseID) \
+             values \
+              ({}, {});".format(function.functionID, self.testCaseID)
+
+    db.query(query)
+
+  def delete_mapping(self, function):
+    if not function or not function.functionID:
+      return
+
+    db = Database.getInstance()
+    query = "delete from RCodeToTestCases \
+              where RCodeToTestCases.functionID = {} and \
+              RCodeToTestCases.testCaseID = {};".format(function.functionID, self.testCaseID)
+
+    db.query(query)
 
   @staticmethod
   def get_by_name(testCaseName):
@@ -33,8 +57,9 @@ class TestCase():
       filesExercised = [record['filePath'] for record in results if record['filePath']]
       fileIdsExercised = list(set([record['fileID'] for record in results if record['fileID']]))
       functionsExercised = [record['functionName'] for record in results if record['functionName']]
+      testCaseID = results[0].get('testCaseID', None) if len(results) > 0 else None
 
-      return TestCase(testCaseName, functionsExercised, filesExercised, fileIdsExercised)
+      return TestCase(testCaseID, testCaseName, functionsExercised, filesExercised, fileIdsExercised)
     else:
       return None
 
@@ -57,8 +82,9 @@ class TestCase():
       filesExercised = [record['filePath'] for record in results if record['filePath']]
       functionsExercised = [record['functionName'] for record in results if record['functionName']]
       fileIdsExercised = list(set([record['fileID'] for record in results if record['fileID']]))
+      testCaseID = results[0].get('testCaseID', None) if len(results) > 0 else None
 
-      return TestCase(testCaseName, functionsExercised, filesExercised, fileIdsExercised)
+      return TestCase(testCaseID, testCaseName, functionsExercised, filesExercised, fileIdsExercised)
     else:
       return None
 
