@@ -2,9 +2,10 @@ from Database import Database
 import json
 
 class TestCase():
-  def __init__(self, name, functionsExercised, filesExercised):
+  def __init__(self, name, functionsExercised, filesExercised, fileIdsExercised):
     self.filesExercised = filesExercised
     self.functionsExercised = functionsExercised
+    self.fileIdsExercised = fileIdsExercised
     self.name = name
 
   def to_json(self):
@@ -30,8 +31,10 @@ class TestCase():
 
     if results and len(results) > 0:
       filesExercised = [record['filePath'] for record in results if record['filePath']]
+      fileIdsExercised = list(set([record['fileID'] for record in results if record['fileID']]))
       functionsExercised = [record['functionName'] for record in results if record['functionName']]
-      return TestCase(testCaseName, functionsExercised, filesExercised)
+
+      return TestCase(testCaseName, functionsExercised, filesExercised, fileIdsExercised)
     else:
       return None
 
@@ -53,7 +56,9 @@ class TestCase():
     if results and len(results) > 0:
       filesExercised = [record['filePath'] for record in results if record['filePath']]
       functionsExercised = [record['functionName'] for record in results if record['functionName']]
-      return TestCase(testCaseName, functionsExercised, filesExercised)
+      fileIdsExercised = list(set([record['fileID'] for record in results if record['fileID']]))
+
+      return TestCase(testCaseName, functionsExercised, filesExercised, fileIdsExercised)
     else:
       return None
 

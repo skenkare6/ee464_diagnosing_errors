@@ -210,8 +210,6 @@ def main():
         searchInDatabase(args.testFile)
 
 
-
-
 if __name__ == "__main__":
     main()
 
