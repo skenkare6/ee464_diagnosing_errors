@@ -1,5 +1,4 @@
 import json
-
 from SourceFile import SourceFile
 
 def getJson(filepath):

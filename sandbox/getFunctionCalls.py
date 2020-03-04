@@ -4,6 +4,10 @@ import os
 import subprocess
 from pyparsing import nestedExpr
 
+# For now, pull in the ORM classes
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+from Repository import Repository
+
 con = pymysql.connect('localhost', 'newuser', 'password', 'ee464_test_db')
 
 def getRFunctionList():
@@ -36,7 +40,7 @@ def getRFunctionCalls(functions):
     for function in functions:
         # print("Function: " + function)
         subprocess.call("Rscript devscript_callGraph.R " + function + " >> getFunctionCalls.txt", shell = True)
-    
+
     mapping = dict()
     with open(os.path.join("getFunctionCalls.txt")) as fp:
         line = fp.readline()
@@ -111,7 +115,7 @@ def parseRTests():
         if not results:
             sql = "INSERT INTO `Repositories` (`path`) VALUES (%s)"
             con.cursor().execute(sql, (src))
-        
+
         cur.execute(selectSql, (src))
         repoID = cur.fetchall()[0][0]
         # print(repoID)
@@ -158,7 +162,7 @@ def mapTestsToFunctions(mapping, tests):
 
     for test in testMapping.keys():
         for func in testMapping[test]:
-            with con: 
+            with con:
                 cur = con.cursor()
                 selectSql = "SELECT functionID FROM `RFunctions` WHERE functionName = %s"
                 cur.execute(selectSql, func)
@@ -169,58 +173,39 @@ def mapTestsToFunctions(mapping, tests):
                 cur.execute(selectSql, test)
                 results = cur.fetchall()
                 testCaseID = results[0][0]
-                
+
                 selectSql = "SELECT * FROM `RCodeToTestCases` WHERE `functionID` = %s AND testCaseID = %s"
                 cur.execute(selectSql, (str(functionID), str(testCaseID)))
                 results = cur.fetchall()
-                
+
                 if not results:
                     sql = "INSERT INTO `RCodeToTestCases` (`functionID`, `testCaseID`) VALUES (%s, %s)"
                     con.cursor().execute(sql, (str(functionID), str(testCaseID)))
-    
+
     return testMapping
 
 def storeFilesAndFunctions(mapping):
     src = "AnomalyDetection"
     rCode = "AnomalyDetection"
-    with con:
-        cur = con.cursor()
-        # Add codebase to repos table
-        selectSql = "SELECT repositoryID FROM `Repositories` WHERE path = %s"
-        cur.execute(selectSql, (src))
-        results = cur.fetchall()
-        if not results:
-            sql = "INSERT INTO `Repositories` (`path`) VALUES (%s)"
-            con.cursor().execute(sql, (src))
-        
-        cur.execute(selectSql, (src))
-        repoID = cur.fetchall()[0][0]
 
-        # Add files to files table
-        for f in mapping.keys():
-            p = os.path.join(rCode, f)
-            selectSql = "SELECT fileID FROM `RFiles` WHERE filePath = %s"
-            cur.execute(selectSql, (p))
-            results = cur.fetchall()
-            if not results:
-                sql = "INSERT INTO `RFiles` (`repositoryID`, `filePath`, `fileType`) VALUES (%s, %s, %s)"
-                con.cursor().execute(sql, (repoID, p, str(0)))
+    repo = Repository.get_by_path(src)
+    repo = Repository.create(src) if not repo else repo
 
-            funcs = mapping[f]
-            # print(f)
-            # print(funcs)
-            cur.execute(selectSql, (p))
-            fileID = cur.fetchall()[0][0]
-            # print(fileID)
-            for func in funcs:
-                selectSql = "SELECT functionID FROM `RFunctions` WHERE functionName = %s and fileID = %s"
-                cur.execute(selectSql, (func,str(fileID),))
-                results = cur.fetchall()
-                if not results:
-                    sql = "INSERT INTO `RFunctions` (`fileID`, `functionName`) VALUES (%s, %s)"
-                    con.cursor().execute(sql, (str(fileID), func))
+    # Add files to files table
+    for f in mapping.keys():
+        filePath = os.path.join(rCode, f)
+
+        file = SourceFile.get_by_file_path(filePath)
+        file = SourceFile.create(filePath, 0, repo.repoID) if not file else file
+
+        for func in mapping[f]:
+            function = Function.get_by_name_and_file_id(func, file.fileID)
+            if not function:
+              Function.create(file.fileID, func)
 
 def searchInDatabase(testFile):
+    print()
+
     with con:
         cur = con.cursor()
         sql = "SELECT functionName from RFunctions where RFunctions.functionID in (SELECT RCodeToTestCases.functionID from RCodeToTestCases where testCaseID in (select testCaseID from RTestCases where testCaseName=%s))"
@@ -234,7 +219,7 @@ def main():
 
     parser.add_argument("--doMappings", type=str, help="Regenerate mappings?")
     parser.add_argument("--testFile", type=str, help="R test file")
-    
+
     args = parser.parse_args()
     if args.doMappings and args.doMappings == "true":
         functions = getRFunctionList() # This returns a mapping of file names to functions

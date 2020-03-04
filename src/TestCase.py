@@ -1,10 +1,18 @@
 from Database import Database
+import json
 
 class TestCase():
   def __init__(self, name, functionsExercised, filesExercised):
     self.filesExercised = filesExercised
     self.functionsExercised = functionsExercised
     self.name = name
+
+  def to_json(self):
+    json_hash = { self.name: {
+      "functions": self.functionsExercised,
+      "files": self.filesExercised
+    }}
+    return json.dumps(json_hash, indent=1)
 
   @staticmethod
   def get_by_name(testCaseName):

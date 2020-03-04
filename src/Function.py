@@ -24,6 +24,26 @@ class Function():
         return None
 
     @staticmethod
+    def get_by_name_and_file_id(funcName, fileID):
+      db = Database.getInstance()
+      query = "select * from RFunctions \
+        left outer join RCodeToTestCases \
+          on RFunctions.functionID = RCodeToTestCases.functionID \
+        left outer join RTestCases \
+          on RCodeToTestCases.testCaseID = RTestCases.testCaseID \
+        where RFunctions.functionName = '{}' \
+        and RFunctions.fileID = {};".format(funcName, fileID)
+
+      results = db.query(query)
+
+      # For now, assume only one function with funcName
+      if len(results) > 0:
+        testCaseNames = [record['testCaseName'] for record in results if record['testCaseName']]
+        return Function(funcName, testCaseNames)
+      else:
+        return None
+
+    @staticmethod
     def create(fileID, functionName):
       db = Database.getInstance()
       query = "insert into RFunctions \
