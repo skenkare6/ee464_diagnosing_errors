@@ -1,7 +1,7 @@
 import sys, os, pytest, json
 
-from SourceFile import SourceFile
-from Database import Database
+from SourceFile import SourceFile  # pylint: disable=import-error
+from Database import Database      # pylint: disable=import-error
 
 def test_gets_the_test_names(with_database):
     sourceFile = SourceFile.get_by_file_path("one.r")

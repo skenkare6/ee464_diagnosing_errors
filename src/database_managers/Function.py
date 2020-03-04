@@ -1,4 +1,4 @@
-from Database import Database
+from Database import Database # pylint: disable=import-error
 
 class Function():
     def __init__(self, name, testCaseNames):

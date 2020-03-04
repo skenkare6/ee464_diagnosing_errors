@@ -1,6 +1,6 @@
 import json
 
-from Database import Database
+from Database import Database # pylint: disable=import-error
 
 class SourceFile():
     def __init__(self, filePath, fileType, testCaseNames, functionNames, repoId):

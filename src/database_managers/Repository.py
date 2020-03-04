@@ -26,11 +26,11 @@ class Repository():
 
     @staticmethod
     def get_by_path(pathName):
-      db = Data.getInstance()
+      db = Database.getInstance()
       query = "select * from Repositories where path = '{}';".format(pathName)
       results = db.query(query)
 
-      if results && len(results) > 0
+      if results and len(results) > 0:
         repo = results[0]
         repository = Repository(repo['repositoryID'], repo['path'])
         return repository
@@ -46,4 +46,4 @@ class Repository():
 
         # TODO: check if query was successful?
         result = db.query(query)
-        return Repository.get_by_repositoryID(repositoryID)
+        return Repository.get_by_path(path)

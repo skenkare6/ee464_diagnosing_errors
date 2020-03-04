@@ -1,7 +1,7 @@
 import pytest, sys, os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src/database_managers')))
-from Database import Database
+from Database import Database # pylint: disable=import-error
 
 @pytest.fixture
 def with_database():

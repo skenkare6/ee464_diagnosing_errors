@@ -1,9 +1,9 @@
 import sys, os, pytest, json
 
-from Function import Function
-from SourceFile import SourceFile
-from Database import Database
-from TestCase import TestCase
+from Function import Function      # pylint: disable=import-error
+from SourceFile import SourceFile  # pylint: disable=import-error
+from Database import Database      # pylint: disable=import-error
+from TestCase import TestCase      # pylint: disable=import-error
 
 def test_get_by_name_test_case_exists(with_database):
   testCase = TestCase.get_by_name("first_test")
