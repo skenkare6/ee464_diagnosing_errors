@@ -109,18 +109,20 @@ def parseRTests():
     rCode = "AnomalyDetection"
     repo = Repository.get_by_path(src)
     repo = Repository.create(src) if not repo else repo
-    repo.repoID
 
     # Add files to files table
     for f in testFileNameMapping.keys():
         filePath = os.path.join(rCode, f)
 
-        file = SourceFile.get_by_file_path(filePath)
-        file = SourceFile.create(filePath, 0, repo.repoID) if not file else file
+        if len(f) > 0:
+          file = SourceFile.get_by_file_path(filePath)
 
-        funcs = testFileNameMapping[f]
+          if not file:
+            file = SourceFile.create(filePath, 1, repo.path)
 
-        for func in funcs:
+          funcs = testFileNameMapping[f]
+
+          for func in funcs:
             testCase = TestCase.get_by_name_and_file_id(func, file.fileID)
 
             if not testCase:
@@ -161,13 +163,16 @@ def storeFilesAndFunctions(mapping):
     for f in mapping.keys():
         filePath = os.path.join(rCode, f)
 
-        file = SourceFile.get_by_file_path(filePath)
-        file = SourceFile.create(filePath, 0, repo.repoID) if not file else file
+        if len(f) > 0:
+          file = SourceFile.get_by_file_path(filePath)
 
-        for func in mapping[f]:
+          if file is None:
+            file = SourceFile.create(filePath, 1, repo.path)
+
+          for func in mapping[f]:
             function = Function.get_by_name_and_file_id(func, file.fileID)
             if not function:
-              Function.create(file.fileID, func)
+              Function.create(func, file.fileID)
 
 def searchInDatabase(testFile):
     print(Function.get_by_name(testFile).to_json())

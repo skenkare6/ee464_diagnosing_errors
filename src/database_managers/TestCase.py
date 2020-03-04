@@ -65,6 +65,9 @@ class TestCase():
 
   @staticmethod
   def get_by_name_and_file_id(testCaseName, fileID):
+    assert testCaseName is not None
+    assert fileID is not None
+
     db = Database.getInstance()
     query = "select * from RTestCases \
             left outer join RCodeToTestCases \

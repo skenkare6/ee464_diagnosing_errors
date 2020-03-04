@@ -23,8 +23,7 @@ def test_sets_file_path(with_database):
 def test_behaviour_on_not_found_filepath(with_database):
     sourceFile = SourceFile.get_by_file_path("cheese.r")
 
-    assert len(sourceFile.testCaseNames) == 0
-    assert len(sourceFile.functionNames) == 0
+    assert sourceFile is None
 
 def test_to_json_string_has_function_names(with_database):
     sourceFile = SourceFile.get_by_file_path("one.r")

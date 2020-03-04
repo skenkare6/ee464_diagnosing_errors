@@ -1,15 +1,16 @@
 import json
 
 from Database import Database # pylint: disable=import-error
+from Repository import Repository
 
 class SourceFile():
-    def __init__(self, filePath, fileType, testCaseNames, functionNames, repoId):
+    def __init__(self, filePath, fileID, fileType, testCaseNames, functionNames, repoId):
         self.filePath = filePath
         self.fileType = fileType
         self.functionNames = functionNames
         self.testCaseNames = testCaseNames
         self.repositoryID = repoId
-        self.fileID = None
+        self.fileID = fileID
 
     def to_json_string(self):
         dict = { self.filePath: { "tests": self.testCaseNames,
@@ -20,21 +21,17 @@ class SourceFile():
     @staticmethod
     def create(filePath, fileType, repositoryPath):
         db = Database.getInstance()
-        # TODO: replace this with Repository methods when Repository is created
-        results = db.query("select * from Repositories where path = '{}';".format(repositoryPath))
 
-        if results and len(results) > 0:
-            repoId = results[0]['repositoryID']
+        repo = Repository.get_by_path(repositoryPath)
+        if repo is None:
+          return None
 
-            query = "insert into RFiles (repositoryID, filePath, fileType) \
-                    values ({}, '{}', '{}');".format(repoId, filePath, fileType)
-            db.query(query)
+        print(repo.repositoryID, filePath, fileType)
+        query = "insert into RFiles (repositoryID, filePath, fileType) \
+                values ({}, '{}', {});".format(repo.repositoryID, filePath, fileType)
+        db.query(query)
 
-            return SourceFile.get_by_file_path(filePath)
-        else:
-            # TODO: Raise RuntimeError for not found??
-            pass
-
+        return SourceFile.get_by_file_path(filePath)
 
     @staticmethod
     def get_by_file_path(filepath):
@@ -51,14 +48,15 @@ class SourceFile():
 
         results = db.query(raw_query)
 
+        if results is None or len(results) == 0:
+          return None
+
         testCaseNames = [record['testCaseName'] for record in results if record['testCaseName']]
         functionNames = [record['functionName'] for record in results if record['functionName']]
         repositoryID = results[0].get('repositoryID', None) if len(results) > 0 else None
         filetype = results[0].get('fileType', None) if len(results) > 0 else None
         fileID = results[0].get('fileID', None) if len(results) > 0 else None
 
-        file = SourceFile(filepath, filetype, testCaseNames, functionNames, repositoryID)
-        file.fileID = fileID
-
+        file = SourceFile(filepath, fileID, filetype, testCaseNames, functionNames, repositoryID)
         return file
 

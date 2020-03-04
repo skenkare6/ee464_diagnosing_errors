@@ -6,6 +6,8 @@ from Database import Database # pylint: disable=import-error
 
 @pytest.fixture
 def with_database():
+    Database.default_db = 'test'
+
     repo_id = create_repository()
 
     file1_id = create_file(repo_id, "one.r")
