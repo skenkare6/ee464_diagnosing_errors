@@ -21,7 +21,8 @@ def with_database():
     create_link(function1_id, test1_id)
     create_link(function1_id, test2_id)
 
-    yield
+    yield # Run the test case
+
     teardown()
 
 # This is horrible but the best way to get tests done before everyone's code
@@ -72,7 +73,7 @@ def create_link(function_id, test_case_id):
 
 def teardown():
     db = Database("test", "root", "")
-    db.query("SET foreign_key_checks = 0;")
+    db.query("SET foreign_key_checks = 0;") # To avoid foreign key dependency issues
     db.query("delete from RCodeToTestCases where 1=1;")
     db.query("delete from RFunctions where 1=1;")
     db.query("delete from RTestCases where 1=1;")
