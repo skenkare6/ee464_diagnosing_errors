@@ -1,0 +1,16 @@
+AnomalyDetectionTs
+{ if ! is.data.frame stop || != ncol is.numeric [[ ( == [ class <- format_timestamp any names c colnames is.logical is.na $ timestamp - which > paste round * length < warning %in% <= message && is.null plot is.character title get_gran aggregate format eval parse = switch / + vector ceiling for seq min :: difftime as.difftime subset & >= list data.frame numeric : detect_anoms stl tapply as.Date max median quantile rbind duplicated return plot.new get_range add_day_labels_datetime as.POSIXlt function ifelse strftime add_formatted_y
+AnomalyDetectionVec
+{ if && is.data.frame == ncol is.numeric [[ <- data.frame c : length || is.vector is.list stop > paste round * ! %in% ( <= message is.null is.logical plot is.character title < / vector ceiling for seq [ min - + subset & >= list numeric = switch detect_anoms $ stl != tapply %/% max median quantile rbind duplicated return plot.new :: get_range while add_formatted_y
+get_gran
+{ = length [[ round difftime max [ sort - if >= return
+add_formatted_y
+{ <- [ if + * ( - > abs = transform return :: seq c function paste round /
+detect_anoms
+{ if is.null stop <- nrow data < * == [ class [[ > length $ rle is.na c na.omit stl ts data.frame ( - median as.numeric trunc + format_timestamp paste0 match.fun mad as.POSIXlt : for message paste = abs break / max which t qt sqrt ^ return list
+get_range
+{ <- [[ if [ > = range return c
+format_timestamp
+{ if == [ class [[ return :: <- strptime as.POSIXlt
+add_day_labels_datetime
+{ if is.null start <- min [[ $ data end max attributes trunc.POSIXt seq as.difftime [ & > < <= == as.POSIXct c + :: function ifelse != as.POSIXlt strftime length as.numeric return

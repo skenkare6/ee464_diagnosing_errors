@@ -1,5 +1,15 @@
 # ee464_diagnosing_errors
 
+## TODO
+
+* Add test case description to RTestCase in database
+* Put in testFile name and get back all of the testcases inside of the testfile
+* Use path in repository table to set Rscript working directories
+* Move modules 1 and 2 into src/ directory of our repo
+* Unhardcode anomalydetection from everywhere
+* Test harness
+* Stretch goal: Test and refactor modules
+
 ## Getting started
 ### Setting up the MySQL databases
 
@@ -34,9 +44,9 @@ Solution: Login into to mysql and enter the following lines.
 ```
 mysql> ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '';
 mysql> FLUSH PRIVILEGES;
-```   
+```
 Issue: Missing modules or other general python errors. <br/>
-Solution: 
+Solution:
 * Ensure you are using the following python tools:
   * python3
   * pymysql

@@ -174,14 +174,14 @@ def storeFilesAndFunctions(mapping):
             if not function:
               Function.create(func, file.fileID)
 
-def searchInDatabase(testFile):
-    print(Function.get_by_name(testFile).to_json())
+def searchInDatabase(testCaseName):
+  print(TestCase.get_by_name(testCaseName).to_json())
 
 def main():
     parser = argparse.ArgumentParser(description='Pass arguments in for the program to read the source code.')
 
     parser.add_argument("--doMappings", type=str, help="Regenerate mappings?")
-    parser.add_argument("--testFile", type=str, help="R test file")
+    parser.add_argument("--testCaseName", type=str, help="R test case name")
 
     args = parser.parse_args()
     if args.doMappings and args.doMappings == "true":
@@ -194,11 +194,11 @@ def main():
         mapping = getRFunctionCalls(functionNames)
         fullTests = parseRTests()
         testMapping = mapTestsToFunctions(mapping, fullTests)
-        if args.testFile:
-            print(testMapping[args.testFile])
+        if args.testCaseName:
+            print(testMapping[args.testCaseName])
 
-    if args.doMappings and args.doMappings == "false" and args.testFile:
-        searchInDatabase(args.testFile)
+    if args.doMappings and args.doMappings == "false" and args.testCaseName:
+        searchInDatabase(args.testCaseName)
 
 
 if __name__ == "__main__":
