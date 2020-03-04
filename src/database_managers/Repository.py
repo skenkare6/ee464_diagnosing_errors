@@ -32,7 +32,7 @@ class Repository():
 
       if results and len(results) > 0:
         repo = results[0]
-        repository = Repository(repo['repositoryID'], repo['path'])
+        repository = Repository(repo.get('repositoryID', None), repo.get('path', None))
         return repository
       else:
         return None

@@ -55,3 +55,26 @@ def test_create(with_database):
 
   assert testCase is not None
   assert testCase.name == "someTest"
+
+def test_assigns_all_fields_with_mappings(with_database):
+  file = SourceFile.get_by_file_path("one.r")
+  testCase = TestCase.create("apoijwdapoijwd", file.fileID)
+  function = Function.create("paoiwdjaowidj", file.fileID)
+
+  testCase.create_mapping(function)
+
+  assert testCase.filesExercised is not None
+  assert testCase.functionsExercised is not None
+  assert testCase.fileIdsExercised is not None
+  assert testCase.testCaseID is not None
+  assert testCase.name is not None
+
+def test_assigns_all_fields_but_exercised_with_mappings(with_database):
+  file = SourceFile.create("blah.r", 0, ".")
+  testCase = TestCase.create("apoijwdapoijwd", file.fileID)
+
+  assert testCase.filesExercised is None or len(testCase.filesExercised) == 0
+  assert testCase.functionsExercised is None or len(testCase.functionsExercised) == 0
+  assert testCase.fileIdsExercised is not None and file.fileID in testCase.fileIdsExercised
+  assert testCase.testCaseID is not None
+  assert testCase.name is not None

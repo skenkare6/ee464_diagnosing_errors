@@ -50,3 +50,10 @@ def test_create(with_database):
 
     assert sourceFile.filePath == "three.r" and sourceFile.fileType == 1
 
+def test_assigns_all_fields(with_database):
+  sourceFile = SourceFile.create("lemons.r", 0, ".")
+  assert sourceFile.filePath == "lemons.r"
+  assert sourceFile.fileType == 0
+  assert sourceFile.functionNames is not None
+  assert sourceFile.testCaseNames is not None
+  assert sourceFile.fileID is not None
