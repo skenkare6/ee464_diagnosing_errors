@@ -18,7 +18,7 @@ class Repository():
 
         results = db.query(query)
 
-        if len(results) > 0:
+        if results and len(results) > 0:
             repository = Repository(results[0]['repositoryID'], results[0]['path'])
             return repository
         else:
@@ -30,7 +30,7 @@ class Repository():
       query = "select * from Repositories where path = '{}';".format(pathName)
       results = db.query(query)
 
-      if results && len(results) > 0
+      if results and len(results) > 0:
         repo = results[0]
         repository = Repository(repo['repositoryID'], repo['path'])
         return repository

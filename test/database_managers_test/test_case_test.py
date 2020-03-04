@@ -13,3 +13,10 @@ def test_get_by_name_test_case_exists(with_database):
 def test_get_by_name_test_case_not_exists(with_database):
   testCase = TestCase.get_by_name("applesauce")
   assert testCase is None
+
+def test_create(with_database):
+  file = SourceFile.get_by_file_path("one.r")
+  testCase = TestCase.create("someTest", file.fileID)
+
+  assert testCase is not None
+  assert testCase.name == "someTest"
