@@ -4,6 +4,7 @@ from SourceFile import SourceFile  # pylint: disable=import-error
 from Database import Database      # pylint: disable=import-error
 
 import SourceToTest                # pylint: disable=import-error
+
 def test_gets_json(with_database):
   json_report = json.loads(SourceToTest.getJson("one.r"))
   assert set(json_report.keys()) == set(['one.r'])

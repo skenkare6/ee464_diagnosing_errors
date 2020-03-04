@@ -1,6 +1,6 @@
 import argparse
 import pymysql
-import os
+import os, sys
 import subprocess
 from pyparsing import nestedExpr
 
@@ -106,44 +106,24 @@ def parseRTests():
     # return fullTests
     src = "AnomalyDetection"
     rCode = "AnomalyDetection"
-    with con:
-        cur = con.cursor()
-        # Add codebase to repos table
-        selectSql = "SELECT repositoryID FROM `Repositories` WHERE path = %s"
-        cur.execute(selectSql, (src))
-        results = cur.fetchall()
-        if not results:
-            sql = "INSERT INTO `Repositories` (`path`) VALUES (%s)"
-            con.cursor().execute(sql, (src))
+    repo = Repository.get_by_path(src)
+    repo = Repository.create(src) if not repo else repo
+    repo.repoID
 
-        cur.execute(selectSql, (src))
-        repoID = cur.fetchall()[0][0]
-        # print(repoID)
+    # Add files to files table
+    for f in testFileNameMapping.keys():
+        filePath = os.path.join(rCode, f)
 
-        # Add files to files table
-        for f in testFileNameMapping.keys():
-            p = os.path.join(rCode, f)
-            selectSql = "SELECT fileID FROM `RFiles` WHERE filePath = %s"
-            cur.execute(selectSql, (p))
-            results = cur.fetchall()
-            if not results:
-                # print("No results!")
-                sql = "INSERT INTO `RFiles` (`repositoryID`, `filePath`, `fileType`) VALUES (%s, %s, %s)"
-                con.cursor().execute(sql, (repoID, p, str(1)))
+        file = SourceFile.get_by_file_path(filePath)
+        file = SourceFile.create(filePath, 0, repo.repoID) if not file else file
 
-            funcs = testFileNameMapping[f]
-            # print(f)
-            # print(funcs)
-            cur.execute(selectSql, (p))
-            fileID = cur.fetchall()[0][0]
-            # print(fileID)
-            for func in funcs:
-                selectSql = "SELECT testCaseID FROM `RTestCases` WHERE testCaseName = %s and fileID = %s"
-                cur.execute(selectSql, (func,str(fileID),))
-                results = cur.fetchall()
-                if not results:
-                    sql = "INSERT INTO `RTestCases` (`fileID`, `testCaseName`) VALUES (%s, %s)"
-                    con.cursor().execute(sql, (str(fileID), func))
+        funcs = testFileNameMapping[f]
+
+        for func in funcs:
+            testCase = TestCase.get_by_name_and_file_id(func, file.fileID)
+
+            if not testCase:
+              testCase = TestCase.create(func, file.fileID)
 
     return testMapping
 
@@ -204,15 +184,7 @@ def storeFilesAndFunctions(mapping):
               Function.create(file.fileID, func)
 
 def searchInDatabase(testFile):
-    print()
-
-    with con:
-        cur = con.cursor()
-        sql = "SELECT functionName from RFunctions where RFunctions.functionID in (SELECT RCodeToTestCases.functionID from RCodeToTestCases where testCaseID in (select testCaseID from RTestCases where testCaseName=%s))"
-        cur.execute(sql, (testFile))
-        functions = cur.fetchall()
-        for func in functions:
-            print(func[0])
+    print(Function.get_by_name(testFile).to_json())
 
 def main():
     parser = argparse.ArgumentParser(description='Pass arguments in for the program to read the source code.')
@@ -236,8 +208,6 @@ def main():
 
     if args.doMappings and args.doMappings == "false" and args.testFile:
         searchInDatabase(args.testFile)
-
-
 
 
 if __name__ == "__main__":

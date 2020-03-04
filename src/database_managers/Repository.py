@@ -18,7 +18,7 @@ class Repository():
 
         results = db.query(query)
 
-        if len(results) > 0:
+        if results and len(results) > 0:
             repository = Repository(results[0]['repositoryID'], results[0]['path'])
             return repository
         else:
