@@ -5,7 +5,7 @@ import subprocess
 from pyparsing import nestedExpr
 
 # For now, pull in the ORM classes
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/database_managers')))
 from Repository import Repository
 
 con = pymysql.connect('localhost', 'newuser', 'password', 'ee464_test_db')
