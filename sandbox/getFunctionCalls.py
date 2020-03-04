@@ -7,8 +7,9 @@ from pyparsing import nestedExpr
 # For now, pull in the ORM classes
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src/database_managers')))
 from Repository import Repository
-
-con = pymysql.connect('localhost', 'newuser', 'password', 'ee464_test_db')
+from Function import Function
+from TestCase import TestCase
+from SourceFile import SourceFile
 
 def getRFunctionList():
     subprocess.call("Rscript devscript_allFunctions.R > allFunctions.txt", shell = True)
@@ -142,25 +143,10 @@ def mapTestsToFunctions(mapping, tests):
 
     for test in testMapping.keys():
         for func in testMapping[test]:
-            with con:
-                cur = con.cursor()
-                selectSql = "SELECT functionID FROM `RFunctions` WHERE functionName = %s"
-                cur.execute(selectSql, func)
-                results = cur.fetchall()
-                functionID = results[0][0]
+            function = Function.get_by_name(func)
+            testCase = TestCase.get_by_name(test)
 
-                selectSql = "SELECT testCaseID FROM `RTestCases` WHERE testCaseName = %s"
-                cur.execute(selectSql, test)
-                results = cur.fetchall()
-                testCaseID = results[0][0]
-
-                selectSql = "SELECT * FROM `RCodeToTestCases` WHERE `functionID` = %s AND testCaseID = %s"
-                cur.execute(selectSql, (str(functionID), str(testCaseID)))
-                results = cur.fetchall()
-
-                if not results:
-                    sql = "INSERT INTO `RCodeToTestCases` (`functionID`, `testCaseID`) VALUES (%s, %s)"
-                    con.cursor().execute(sql, (str(functionID), str(testCaseID)))
+            testCase.create_mapping(function)
 
     return testMapping
 
