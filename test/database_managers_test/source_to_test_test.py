@@ -4,6 +4,7 @@ from SourceFile import SourceFile
 from Database import Database
 
 import SourceToTest
+
 def test_gets_json(with_database):
   json_report = json.loads(SourceToTest.getJson("one.r"))
   assert set(json_report.keys()) == set(['one.r'])
