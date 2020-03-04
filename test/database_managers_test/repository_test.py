@@ -1,6 +1,5 @@
 import sys, os, pytest, json
 
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../src')))
 from Repository import Repository
 from Database import Database
 
