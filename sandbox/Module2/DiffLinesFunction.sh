@@ -4,7 +4,7 @@
 #Reference: John Mellor on Stack Overflow, 2012
 #https://stackoverflow.com/questions/8259851/using-git-diff-how-can-i-get-added-and-modified-lines-numbers
 
-diff-lines() {
+diff_lines() {
     local path=
     local line=
     while read; do
@@ -24,6 +24,6 @@ diff-lines() {
     done
 }
 
-#git diff -U0 HEAD~ | diff-lines | sed "s/^/\"/ ; s/:/\" \"/" | sed "s/:.*/\"/g"
+#git diff -U0 HEAD~ | diff_lines | sed "s/^/\"/ ; s/:/\" \"/" | sed "s/:.*/\"/g"
 #That was an attempt to protect for spaces in filenames
-git diff -U0 HEAD~ | diff-lines | sed "s/:/ /" | sed "s/:.*//g"
+git diff -U0 HEAD~ | diff_lines | sed "s/:/ /" | sed "s/:.*//g"
