@@ -13,11 +13,11 @@ def testSelection():
     # go to database and find tests that match function names
     # output test names into JSON object
     cur = db.cursor()
-    subprocess.call('./getFunctionNames.sh', shell=True)
+    subprocess.call('./getCodeChanges.sh testselection', shell=True)
 
     functionList = dict()
     testList = dict()
-    with open('changedFunctions.txt', 'r') as fp:
+    with open('changedCode.txt', 'r') as fp:
         funcs = set()
         for line in fp.readlines():
             line = line.strip()
@@ -25,7 +25,7 @@ def testSelection():
         functionList['changedFunctions'] = funcs
         fp.close()
 
-    with open('changedFunctions.txt', 'r') as fp:
+    with open('changedCode.txt', 'r') as fp:
         tests = set()
         for line in fp.readlines():
             line = line.strip()
@@ -56,7 +56,7 @@ def redrawMappings():
     # call DiffLinesFunction.sh
     # output file names into JSON object
     fileList = dict()
-    subprocess.call('./getFileNames.sh >> changedFiles.txt', shell=True)
+    subprocess.call('./getCodeChanges.sh redrawmappings', shell=True)
     with open('changedFiles.txt', 'r') as fp:
         files = set()
         for line in fp.readlines():
