@@ -57,7 +57,7 @@ def redrawMappings():
     # output file names into JSON object
     fileList = dict()
     subprocess.call('./getCodeChanges.sh redrawmappings', shell=True)
-    with open('changedFiles.txt', 'r') as fp:
+    with open('changedCode.txt', 'r') as fp:
         files = set()
         for line in fp.readlines():
             lines = line.split()

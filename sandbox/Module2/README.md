@@ -4,6 +4,6 @@ Command to run module 2:
 The execution mode options are testselection or redrawmappings
 
 Things to do:
-- Need to fix the execution so the module can be run from outside the Anomaly Detection folder
+- pass in an argument into module2.py that specifies codebase name so that changing directories doesn't have to be hardcoded
 - Need to find an alternate to the source() method in contextLineNumber.R
 - Call source-to-test from within module2.py function redrawmappings()

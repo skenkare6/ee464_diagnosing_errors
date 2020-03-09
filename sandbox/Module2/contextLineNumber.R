@@ -1,5 +1,6 @@
 #Prints an associated R object for a given filename and line number
 #Arguments (required): filename line_number
+setwd("../AnomalyDetection")
 
 args <- commandArgs(trailingOnly=TRUE)
 filename <- args[1]

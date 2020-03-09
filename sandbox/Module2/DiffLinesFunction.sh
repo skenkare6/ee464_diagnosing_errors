@@ -3,6 +3,7 @@
 #Can be used standalone or with wrapper.sh
 #Reference: John Mellor on Stack Overflow, 2012
 #https://stackoverflow.com/questions/8259851/using-git-diff-how-can-i-get-added-and-modified-lines-numbers
+cd ../AnomalyDetection
 
 diff_lines() {
     local path=
