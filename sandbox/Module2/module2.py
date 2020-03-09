@@ -75,12 +75,16 @@ def main():
     parser = argparse.ArgumentParser(description='Pass arguments that specify test selection or redraw mapping.')
     parser.add_argument("-m", "--mode", help="execution mode to run (test selection or redraw mappings)")
     args = parser.parse_args()
-    mode = (args.mode).lower()
-    if(mode == "testselection"):
-        testSelection()
-    elif(mode == "redrawmappings"):
-        redrawMappings()
-    
+    if((args.mode) is None):
+        print("invalid argument")
+    else:        
+        mode = (args.mode).lower()
+        if(mode == "testselection"):
+            testSelection()
+        elif(mode == "redrawmappings"):
+            redrawMappings()
+        else:
+            print("invalid argument")
 
 
 
