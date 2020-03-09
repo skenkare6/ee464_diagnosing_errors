@@ -1,5 +1,5 @@
 Command to run module 2:
->> python3 module2.py --mode <execution mode>
+>> python3 module2.py --mode \<execution mode\>
 
 The execution mode options are testselection or redrawmappings
 
