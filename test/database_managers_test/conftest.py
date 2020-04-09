@@ -1,10 +1,13 @@
 import pytest, sys, os
 
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src/database_managers')))
-from Database import Database
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src')))
+from Database import Database # pylint: disable=import-error
 
 @pytest.fixture
 def with_database():
+    Database.default_db = 'test'
+
     repo_id = create_repository()
 
     file1_id = create_file(repo_id, "one.r")
@@ -20,7 +23,8 @@ def with_database():
     create_link(function1_id, test1_id)
     create_link(function1_id, test2_id)
 
-    yield
+    yield # Run the test case
+
     teardown()
 
 # This is horrible but the best way to get tests done before everyone's code
@@ -71,9 +75,12 @@ def create_link(function_id, test_case_id):
 
 def teardown():
     db = Database("test", "root", "")
+    db.query("SET foreign_key_checks = 0;") # To avoid foreign key dependency issues
     db.query("delete from RCodeToTestCases where 1=1;")
-    db.query("delete from RTestCases where 1=1;")
     db.query("delete from RFunctions where 1=1;")
+    db.query("delete from RTestCases where 1=1;")
     db.query("delete from RFiles where 1=1;")
     db.query("delete from Repositories where 1=1;")
+    db.query("SET foreign_key_checks = 1;")
+
 

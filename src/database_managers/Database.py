@@ -1,6 +1,8 @@
 import pymysql.cursors
 
 class Database:
+    default_db = 'production'
+
     def __init__(self, db, user, password):
         self.connection = pymysql.connect(host='localhost',
                                           user=user,
@@ -11,7 +13,7 @@ class Database:
 
     @staticmethod
     def getInstance():
-        return Database('test','root','')
+      return Database(Database.default_db, 'root', '')
 
     # TODO: Make this not SQL injectable
     def query(self, query_string):

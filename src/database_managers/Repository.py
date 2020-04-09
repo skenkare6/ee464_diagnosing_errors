@@ -1,5 +1,5 @@
 # This is an interface to query/insert from/into the 'Repositories' table.
-# get_by_repositoryID takes in a repository's ID and returns a Repository 
+# get_by_repositoryID takes in a repository's ID and returns a Repository
 # class, if it exists, else it returns None.
 # create takes in a repository's ID and returns a Repository class.
 
@@ -18,19 +18,32 @@ class Repository():
 
         results = db.query(query)
 
-        if len(results) > 0:
+        if results and len(results) > 0:
             repository = Repository(results[0]['repositoryID'], results[0]['path'])
             return repository
         else:
             return None
 
     @staticmethod
-    def create(repositoryID, path):
+    def get_by_path(pathName):
+      db = Database.getInstance()
+      query = "select * from Repositories where path = '{}';".format(pathName)
+      results = db.query(query)
+
+      if results and len(results) > 0:
+        repo = results[0]
+        repository = Repository(repo.get('repositoryID', None), repo.get('path', None))
+        return repository
+      else:
+        return None
+
+    @staticmethod
+    def create(path):
         db = Database.getInstance()
         query = "insert into Repositories \
-                 (repositoryID, path) values \
-                 ({}, '{}');".format(repositoryID, path)
+                 (path) values \
+                 ('{}');".format(path)
 
         # TODO: check if query was successful?
         result = db.query(query)
-        return Repository.get_by_repositoryID(repositoryID)
+        return Repository.get_by_path(path)
