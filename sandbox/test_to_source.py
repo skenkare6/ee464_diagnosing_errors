@@ -272,27 +272,30 @@ def processMappingFile(functionIDs, functionNames):
 
 
 def main():
-    start = time.time()
-    functions = getRFunctionList() # This returns a mapping of file names to functions
-    functionNames = []
-    for fileName in functions.keys():
-        functionNames.extend(functions[fileName])
-    functionNames = list(set(functionNames))
-    testFileNameMapping, testMapping = parseRTests()
-    #sourceToTest = dict()
-    #for function in functionNames:
-    #    print(function)
-    #    sourceToTest[function] = functionToTestsLinking(function, testMapping)
-        
-    #testToSourceMapping = testToSource(sourceToTest)
-    #print(testToSourceMapping)
-    functionIDs = writeTestFile(functionNames, testMapping)
-    start = time.time()
-    subprocess.call("Rscript devscript_covr_mapping.R > mapping.txt 2>&1", shell = True)
-    end = time.time()
-    testToSourceMapping = processMappingFile(functionIDs, functionNames)
-    print(testToSourceMapping)
-    print("Elapsed: ", end - start)
+    parser = argparse.ArgumentParser(description='Pass arguments in for the program to read the source code.')
+
+    parser.add_argument("--doMappings", type=str, help="Regenerate mappings?")
+    parser.add_argument("--testCaseName", type=str, help="R test case name")
+
+    args = parser.parse_args()
+    if args.doMappings and args.doMappings == "true":
+        start = time.time()
+        functions = getRFunctionList() # This returns a mapping of file names to functions
+        functionNames = []
+        for fileName in functions.keys():
+            functionNames.extend(functions[fileName])
+        functionNames = list(set(functionNames))
+        testFileNameMapping, testMapping = parseRTests()
+        functionIDs = writeTestFile(functionNames, testMapping)
+        start = time.time()
+        subprocess.call("Rscript devscript_covr_mapping.R > mapping.txt 2>&1", shell = True)
+        end = time.time()
+        testToSourceMapping = processMappingFile(functionIDs, functionNames)
+        print(testToSourceMapping)
+        print("Elapsed: ", end - start)
+
+    if args.doMappings and args.doMappings == "false" and args.testCaseName:
+        searchInDatabase(args.testCaseName)
 
 
 if __name__ == "__main__":
