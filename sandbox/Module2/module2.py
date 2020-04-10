@@ -8,12 +8,20 @@ from pyparsing import nestedExpr
 db = pymysql.connect(host = "localhost", database = 'test', user = "root", passwd = "S4ang4ai!")
 
 def testSelection():
-    # call wrapper.sh
+    # get function names from git diff into changedCode.txt
+    # check to see if repository is in database, if not, then exit (depends on when repository will be added)
     # parse changedFunctions.txt
     # go to database and find tests that match function names
     # output test names into JSON object
     cur = db.cursor()
-    subprocess.call('./getCodeChanges.sh testselection', shell=True)
+    sql = ("SELECT path FROM Repositories;")
+    cur.execute(sql);
+    result = cur.fetchall()
+    if not result:
+        print("No repository has been added to the database. Please specify a database before moving forward.")
+        exit(0)
+    result = result[0][0]
+    subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + result], shell=True)
 
     functionList = dict()
     testList = dict()
@@ -26,6 +34,13 @@ def testSelection():
         fp.close()
 
     with open('changedCode.txt', 'r') as fp:
+        sql = ("SELECT * FROM RFunctions;")  # can we assume that if RFunction is populated than the other are as well?
+        cur.execute(sql)
+        r1 = cur.fetchall()
+        if not r1:
+            redrawMappings()
+            exit(0)
+
         tests = set()
         for line in fp.readlines():
             line = line.strip()
@@ -33,6 +48,9 @@ def testSelection():
             sql = ("SELECT functionID FROM RFunctions WHERE functionName = %s;")
             cur.execute(sql, (line))
             result = cur.fetchall()
+            if not result:
+                redrawMappings()
+                exit(0)
             result = result[0][0]
 
             sql = "SELECT testCaseID FROM RCodeToTestCases WHERE functionID = '%s';"
@@ -55,8 +73,17 @@ def testSelection():
 def redrawMappings():
     # call DiffLinesFunction.sh
     # output file names into JSON object
+    cur = db.cursor()
+    sql = ("SELECT path FROM Repositories;")
+    cur.execute(sql);
+    result = cur.fetchall()
+    result = result[0][0]
+    if not result:
+        print("No repository has been added to the database. Please specify a database before moving forward.")
+        exit(0)
+
     fileList = dict()
-    subprocess.call('./getCodeChanges.sh redrawmappings', shell=True)
+    subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + result], shell=True)
     with open('changedCode.txt', 'r') as fp:
         files = set()
         for line in fp.readlines():
@@ -76,7 +103,7 @@ def main():
     parser.add_argument("-m", "--mode", help="execution mode to run (test selection or redraw mappings)")
     args = parser.parse_args()
     if((args.mode) is None):
-        print("invalid argument")
+        print("Please enter an execution mode to run (TESTSELECTION or REDRAWMAPPINGS)")
     else:        
         mode = (args.mode).lower()
         if(mode == "testselection"):

@@ -5,18 +5,24 @@ then
 	rm changedCode.txt
 fi
 
-if [ $1 = 'redrawmappings' ]
+if [ $# -eq 2 ]
 then
-        ./DiffLinesFunction.sh | while read entry
-        do
-        echo $entry >> changedCode.txt
-        done
-elif [ $1 = 'testselection' ]
-then
-        ./DiffLinesFunction.sh | while read entry
-        do
-        Rscript contextLineNumber.R $entry >> changedCode.txt
-        done
+
+	if [ $1 = 'redrawmappings' ]
+	then
+        	./DiffLinesFunction.sh $2 | while read entry
+        	do
+        	echo $entry >> changedCode.txt
+        	done
+	elif [ $1 = 'testselection' ]
+	then
+        	./DiffLinesFunction.sh $2 | while read entry
+        	do
+        	Rscript contextLineNumber.R $entry $2 >> changedCode.txt
+        	done
+	else
+        	echo "Not a proper input"
+	fi
 else
-        echo "Not a proper input"
+	echo "no repository specified"
 fi

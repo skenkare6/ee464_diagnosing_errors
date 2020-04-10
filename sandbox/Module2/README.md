@@ -4,6 +4,8 @@ Command to run module 2:
 The execution mode options are testselection or redrawmappings
 
 Things to do:
-- pass in an argument into module2.py that specifies codebase name so that changing directories doesn't have to be hardcoded
 - Need to find an alternate to the source() method in contextLineNumber.R
-- Call source-to-test from within module2.py function redrawmappings()
+- Call source-to-test from within module2.py function redrawmappings() (right now its just printing)
+- If database is empty:
+	- Can we assume that the repository name will be in the database prior to calling redrawmappings?
+	- Can we assume that if RFunctions table is populated than the other tables (RTestCases, etc) are populated?
