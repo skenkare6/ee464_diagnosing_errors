@@ -4,6 +4,7 @@ from subprocess import Popen
 import pymysql.cursors
 import argparse
 from pyparsing import nestedExpr
+import time
 
 db = pymysql.connect(host = "localhost", database = 'test', user = "root", passwd = "S4ang4ai!")
 
@@ -18,7 +19,7 @@ def testSelection():
     cur.execute(sql);
     result = cur.fetchall()
     if not result:
-        print("No repository has been added to the database. Please specify a database before moving forward.")
+        print("No repository has been added to the database. Please specify a database, or call redrawmappings, before moving forward.")
         exit(0)
     result = result[0][0]
     subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + result], shell=True)
@@ -38,6 +39,7 @@ def testSelection():
         cur.execute(sql)
         r1 = cur.fetchall()
         if not r1:
+            print("No mappings in the database, calling redrawmappings...")
             redrawMappings()
             exit(0)
 
@@ -49,6 +51,7 @@ def testSelection():
             cur.execute(sql, (line))
             result = cur.fetchall()
             if not result:
+                print("Function %s is not mapped in the database, calling redrawmappings..." % (line))
                 redrawMappings()
                 exit(0)
             result = result[0][0]
@@ -74,7 +77,8 @@ def redrawMappings():
     # call DiffLinesFunction.sh
     # output file names into JSON object
     cur = db.cursor()
-    sql = ("SELECT path FROM Repositories;")
+
+    sql = ("SELECT path FROM Repositories;")    # assuming that there will be at least one initial mapping before redrawmappings is called
     cur.execute(sql);
     result = cur.fetchall()
     result = result[0][0]
@@ -92,7 +96,7 @@ def redrawMappings():
             #print(lines[0])
         fileList['filesToMap'] = files
         fp.close()
-    print(fileList)
+    print(fileList) # *** call test-to-source from here ***
 
 
 def main():
