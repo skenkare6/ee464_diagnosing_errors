@@ -3,7 +3,11 @@
 #Can be used standalone or with wrapper.sh
 #Reference: John Mellor on Stack Overflow, 2012
 #https://stackoverflow.com/questions/8259851/using-git-diff-how-can-i-get-added-and-modified-lines-numbers
-cd ../$1
+#var=$(pwd)	# pwd should be /sandbox/Module2
+#v="${var%/*}"	# setting v to sanbox directory
+#cd $v/AnomalyDetection	# setting directory of this file to inside the AnomalyDetection Project
+#echo "In DiffLinesFunction.sh, working directory is "
+#echo $(pwd)
 
 diff_lines() {
     local path=
