@@ -8,7 +8,8 @@ listFunctionNames <- function(filename) {
   return(functions)
 }
 
-setwd("AnomalyDetection/R")
+args = commandArgs(trailingOnly=TRUE)
+setwd(args[1])
 # setwd("AnomalyDetection/tests/testthat")
 files <- list.files()
 for (i in seq_along(files)) {
