@@ -73,7 +73,6 @@ def parseRTests(src):
                     line = fp.readline()
             testFileNameMapping[testFilename] = newTestFilenames
     
-    # src = "AnomalyDetection"
     rCode = src + "/tests/testthat"
     repo = Repository.get_by_path(src)
     repo = Repository.create(src) if not repo else repo
@@ -103,8 +102,8 @@ def parseRTests(src):
 
     return (testFileNameMapping, testMapping)
 
-def functionToTestsLinking(functionName, testMapping):
-    starterCode = "setwd(\"AnomalyDetection\")\nlibrary(devtools)\ndevtools::load_all(\".\")\n"
+def functionToTestsLinking(src, functionName, testMapping):
+    starterCode = "setwd(\"" + src + "\")\nlibrary(devtools)\ndevtools::load_all(\".\")\n"
     
     startOfTestCode = "testFunc <- function() {\n"
     endOfTestCode = "\n}\n"
@@ -210,8 +209,8 @@ def testToSource(sourceToTestMapping):
 
     return testToSource
 
-def writeTestFile(functionNames, testMapping):
-    starterCode = "setwd(\"AnomalyDetection\")\nlibrary(devtools)\ndevtools::load_all(\".\")\n"
+def writeTestFile(src, functionNames, testMapping):
+    starterCode = "setwd(\"" + src + "\")\nlibrary(devtools)\ndevtools::load_all(\".\")\n"
     
     startOfTestCode = "testFunc <- function() {\n"
     endOfTestCode = "\n}\n"
@@ -310,7 +309,12 @@ def storeMappingInDatabase(testToSourceMapping):
         testCase = TestCase.get_by_name(test)
         for func in testToSourceMapping[test]:
             function = Function.get_by_name(func)
-            testCase.create_mapping(function)
+            mapping = testCase.get_mapping(function)
+
+            if not mapping:
+              testCase.create_mapping(function)
+
+            # testCase.create_mapping(function)
 
 def mapOriginalTests(testFileNameMapping, testToSourceMapping):
     # print(testFileNameMapping)
@@ -329,8 +333,6 @@ def searchInDatabase(testCaseName):
     print(TestCase.get_by_name(testCaseName).to_json())
 
 def storeFilesAndFunctions(src, mapping):
-    # src = "AnomalyDetection"
-    # rCode = "AnomalyDetection/R"
     rCode = src + "/R"
 
     repo = Repository.get_by_path(src)
@@ -368,14 +370,14 @@ def main():
             functionNames.extend(functions[fileName])
         functionNames = list(set(functionNames))
         testFileNameMapping, testMapping = parseRTests(args.repositoryPath)
-        #functionIDs = writeTestFile(functionNames, testMapping)
+        functionIDs = writeTestFile(args.repositoryPath, functionNames, testMapping)
         #start = time.time()
-        #subprocess.call("Rscript devscript_covr_mapping.R > mapping.txt 2>&1", shell = True)
+        subprocess.call("Rscript devscript_covr_mapping.R > mapping.txt 2>&1", shell = True)
         #end = time.time()
-        #testToSourceMapping = processMappingFile(functionIDs, functionNames)
-        #testToSourceMapping = mapOriginalTests(testFileNameMapping, testToSourceMapping)
+        testToSourceMapping = processMappingFile(functionIDs, functionNames)
+        testToSourceMapping = mapOriginalTests(testFileNameMapping, testToSourceMapping)
         #print(testToSourceMapping)
-        #storeMappingInDatabase(testToSourceMapping)
+        storeMappingInDatabase(testToSourceMapping)
         #print("Elapsed: ", end - start)
 
     if args.doMappings and args.doMappings == "false" and args.testCaseName:
