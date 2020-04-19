@@ -40,16 +40,16 @@ def getRFunctionList(src):
 # Returns:
 # 1) testFileNameMapping: each input test to the list of split tests
 # 2) testMapping: the filename of each test to the content of each test
-def parseRTests():
+def parseRTests(src):
     curString = ""
     status = 0 # not found anything yet
     testMapping = dict()
     testFileNameMapping = dict()
-    for filename in os.listdir("AnomalyDetection/tests/testthat"):
+    for filename in os.listdir(src + "/tests/testthat"):
         if filename.endswith(".R") and filename.startswith("test-"):
             testFilename = filename
             newTestFilenames = []
-            with open(os.path.join("AnomalyDetection/tests/testthat/", filename)) as fp:
+            with open(os.path.join(src + "/tests/testthat/", filename)) as fp:
                 count = 0
                 line = fp.readline()
                 while line:
@@ -72,6 +72,34 @@ def parseRTests():
                         count += 1
                     line = fp.readline()
             testFileNameMapping[testFilename] = newTestFilenames
+    
+    # src = "AnomalyDetection"
+    rCode = src + "/tests/testthat"
+    repo = Repository.get_by_path(src)
+    repo = Repository.create(src) if not repo else repo
+
+    # Add files to files table
+    for f in testFileNameMapping.keys():
+        filePath = os.path.join(rCode, f)
+
+        if len(f) > 0:
+          file = SourceFile.get_by_file_path(filePath)
+
+          if not file:
+            file = SourceFile.create(filePath, 1, repo.path)
+
+          funcs = testFileNameMapping[f]
+
+          testCase = TestCase.get_by_name_and_file_id(f, file.fileID)
+
+          if not testCase:
+            testCase = TestCase.create(f, file.fileID)
+          
+          for func in funcs:
+            testCase = TestCase.get_by_name_and_file_id(func, file.fileID)
+
+            if not testCase:
+              testCase = TestCase.create(func, file.fileID)
 
     return (testFileNameMapping, testMapping)
 
@@ -335,11 +363,11 @@ def main():
         start = time.time()
         functions = getRFunctionList(args.repositoryPath) # This returns a mapping of file names to functions
         storeFilesAndFunctions(args.repositoryPath, functions)
-        #functionNames = []
-        #for fileName in functions.keys():
-        #    functionNames.extend(functions[fileName])
-        #functionNames = list(set(functionNames))
-        #testFileNameMapping, testMapping = parseRTests()
+        functionNames = []
+        for fileName in functions.keys():
+            functionNames.extend(functions[fileName])
+        functionNames = list(set(functionNames))
+        testFileNameMapping, testMapping = parseRTests(args.repositoryPath)
         #functionIDs = writeTestFile(functionNames, testMapping)
         #start = time.time()
         #subprocess.call("Rscript devscript_covr_mapping.R > mapping.txt 2>&1", shell = True)
