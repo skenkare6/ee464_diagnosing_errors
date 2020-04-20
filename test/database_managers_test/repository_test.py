@@ -16,3 +16,10 @@ def test_assigns_all_fields(with_database):
 
   assert repo.repositoryID is not None
   assert repo.path is not None
+
+def test_get_all_repositories(with_database):
+  repo = Repository.create("blah")
+
+  repos = Repository.get_all()
+  reponames = [repo.path for repo in repos if repo]
+  assert set(["blah", "."]) == set(reponames)

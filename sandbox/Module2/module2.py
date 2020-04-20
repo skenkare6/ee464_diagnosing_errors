@@ -5,6 +5,10 @@ import pymysql.cursors
 import argparse
 from pyparsing import nestedExpr
 import time
+import sys, os
+
+# For now, pull in the ORM classes
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src/database_managers')))
 
 db = pymysql.connect(host = "localhost", database = 'test', user = "root", passwd = "S4ang4ai!")
 
@@ -46,7 +50,7 @@ def testSelection():
         tests = set()
         for line in fp.readlines():
             line = line.strip()
-            
+
             sql = ("SELECT functionID FROM RFunctions WHERE functionName = %s;")
             cur.execute(sql, (line))
             result = cur.fetchall()
@@ -70,9 +74,9 @@ def testSelection():
         fp.close()
     cur.close()
     print(functionList)
-    print(testList)    
+    print(testList)
     db.close()
-    
+
 def redrawMappings():
     # call DiffLinesFunction.sh
     # output file names into JSON object
@@ -108,7 +112,7 @@ def main():
     args = parser.parse_args()
     if((args.mode) is None):
         print("Please enter an execution mode to run (TESTSELECTION or REDRAWMAPPINGS)")
-    else:        
+    else:
         mode = (args.mode).lower()
         if(mode == "testselection"):
             testSelection()
