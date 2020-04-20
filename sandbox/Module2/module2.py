@@ -25,9 +25,9 @@ def testSelection():
         exit(1)
 
     result = result[0]
-    print(result.path)
-    print(Repository.get_all())
-    a = input("press a")
+#    print(result.path)
+#    print(Repository.get_all())
+#    a = input("press a")
 
     subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + result.path], shell=True)
 
