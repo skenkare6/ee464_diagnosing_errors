@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1587502316315.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2838810744",
+    "id" : "2AC0C46A",
+    "lastKnownWriteTime" : 1587502984,
+    "last_content_update" : 1587502984584,
+    "path" : "~/workingdir/workwork/tests/testthat/test-divide.R",
+    "project_path" : "tests/testthat/test-divide.R",
+    "properties" : {
+        "cursorPosition" : "5,0",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

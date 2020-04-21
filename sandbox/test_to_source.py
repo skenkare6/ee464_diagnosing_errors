@@ -330,6 +330,10 @@ def mapOriginalTests(testFileNameMapping, testToSourceMapping):
     return fullTestToSourceMapping
 
 def searchInDatabase(testCaseName):
+  tc=TestCase.get_by_name(testCaseName)
+  if tc is None:
+    print("********* Test case was not found *********")
+  else:
     print(TestCase.get_by_name(testCaseName).to_json())
 
 def storeFilesAndFunctions(src, mapping):
@@ -382,6 +386,9 @@ def main():
 
     if args.doMappings and args.doMappings == "false" and args.testCaseName:
         searchInDatabase(args.testCaseName)
+
+    if not(args.doMappings == "false" or args.doMappings=="true"):
+        print("******* No correct flag specified, please use true or false next time *******")
 
 
 if __name__ == "__main__":
