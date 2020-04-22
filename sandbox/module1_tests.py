@@ -16,7 +16,7 @@ addition_output='{\\n "test-addition-0.R": {\\n  "functions": [\\n   "add2nums"\
 sub_output='{\\n "test-subtraction-0.R": {\\n  "functions": [\\n   "sub2nums"\\n  ],\\n  "files": [\\n   "workwork/R/sub2nums.R"\\n  ]\\n }\\n}'
 mult_output='{\\n "test-multiply-0.R": {\\n  "functions": [\\n   "mult2nums"\\n  ],\\n  "files": [\\n   "workwork/R/mult2nums.R"\\n  ]\\n }\\n}'
 div_output='{\\n "test-divs-0.R": {\\n  "functions": [\\n   "div2nums"\\n  ],\\n  "files": [\\n   "workwork/R/div2nums.R"\\n  ]\\n }\\n}'
-all_output='{\\n "test-all-0.R": {\\n  "functions": [\\n   "div2nums",\\n   "mult2nums",\\n   "sub2nums",\\n   "add2nums"\\n  ],\\n  "files": [\\n   "workwork/R/div2nums.R",\\n   "workwork/R/mult2nums.R",\\n   "workwork/R/sub2nums.R",\\n   "workwork/R/add2nums.R"\\n  ]\\n }\\n}'
+all_output='{\\n "test-all-0.R": {\\n  "functions": [\\n   "mult2nums",\\n   "div2nums",\\n   "sub2nums",\\n   "add2nums"\\n  ],\\n  "files": [\\n   "workwork/R/mult2nums.R",\\n   "workwork/R/div2nums.R",\\n   "workwork/R/sub2nums.R",\\n   "workwork/R/add2nums.R"\\n  ]\\n }\\n}'
 
 
 
@@ -107,6 +107,7 @@ def main():
 	check_mult_map()
 	check_div_map()
 	check_all_map()
+	print("All passed")
 	
 
 if __name__=="__main__":
