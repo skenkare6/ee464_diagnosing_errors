@@ -37,6 +37,25 @@ def getRFunctionList(src):
 
     return mapping
 
+def getFunctionListForFile(src, fileName):
+    src = src + "/R"
+    subprocess.call("Rscript devscript_functionsInFile.R " + src + " " + fileName + " > allFunctions.txt", shell = True)
+    mapping = dict()
+    with open(os.path.join("allFunctions.txt")) as fp:
+        line = fp.readline();
+        funcs = []
+        while line:
+            if ":" in line:
+                split = line.split(':')[0]
+                funcName = split.strip()
+                # print(funcName)
+                funcs.append(funcName)
+            line = fp.readline()
+
+    mapping[fileName] = funcs
+
+    return mapping
+
 # Returns:
 # 1) testFileNameMapping: each input test to the list of split tests
 # 2) testMapping: the filename of each test to the content of each test
@@ -263,6 +282,7 @@ def writeTestFile(src, functionNames, testMapping):
     return functionIDs
 
 def processMappingFile(functionIDs, functionNames):
+    print(functionNames)
     numFunctions = len(functionNames)
     functionCount = 0
     testCount = 0
@@ -363,8 +383,26 @@ def main():
     parser.add_argument("--doMappings", type=str, help="Regenerate mappings?")
     parser.add_argument("--testCaseName", type=str, help="R test case name")
     parser.add_argument("--repositoryPath", type=str, help="Repository Path")
+    parser.add_argument("--harnessInput", type=str, help="Single File to Redo Mappings For")
 
     args = parser.parse_args()
+    if args.harnessInput:
+        fileName = args.harnessInput
+        functions = getFunctionListForFile(args.repositoryPath, fileName)
+        functionNames = []
+        for fileName in functions.keys():
+            functionNames.extend(functions[fileName])
+        functionNames = list(set(functionNames))
+        #print(functionNames)
+        testFileNameMapping, testMapping = parseRTests(args.repositoryPath)
+        functionIDs = writeTestFile(args.repositoryPath, functionNames, testMapping)
+        #print(functionIDs)
+        subprocess.call("Rscript devscript_covr_mapping.R > mapping.txt 2>&1", shell = True)
+        testToSourceMapping = processMappingFile(functionIDs, functionNames)
+        testToSourceMapping = mapOriginalTests(testFileNameMapping, testToSourceMapping)
+        print(testToSourceMapping)
+        storeMappingInDatabase(testToSourceMapping)
+
     if args.doMappings and args.doMappings == "true":
         start = time.time()
         functions = getRFunctionList(args.repositoryPath) # This returns a mapping of file names to functions
