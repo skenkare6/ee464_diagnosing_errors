@@ -12,22 +12,17 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../.
 from Repository import Repository
 from Function import Function
 
-def testSelection():
+def testSelection(repo):
     # get function names from git diff into changedCode.txt
     # check to see if repository is in database, if not, then exit (depends on when repository will be added)
     # parse changedFunctions.txt
     # go to database and find tests that match function names
     # output test names into JSON object
-    result = Repository.get_all()
+    result = Repository.get_by_path(repo)
 
-    if not result or len(result) == 0:
+    if not result:
         print("No repository has been added to the database. Please specify a database, or call redrawmappings, before moving forward.")
         exit(1)
-
-    result = result[0]
-#    print(result.path)
-#    print(Repository.get_all())
-#    a = input("press a")
 
     subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + result.path], shell=True)
 
@@ -59,25 +54,24 @@ def testSelection():
                 exit(1)
 
             tests.add(function.testCaseNames)
-
         testList['testToRun'] = tests
 
     print(functionList)
     print(testList)
 
-def redrawMappings():
+def redrawMappings(repo):
     # call DiffLinesFunction.sh
     # output file names into JSON object
-    repos = Repository.get_all()
+    repo = Repository.get_by_path(repo)
 
-    if not repos or len(repos) == 0:
+    if not repo:
         print("No repository has been added to the database. Please specify a database before moving forward.")
         exit(1)
 
-    targetRepo = repos[0]
-
     fileList = dict()
-    subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + targetRepo.path], shell=True)
+    subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + repo.path], shell=True)
+
+    print(testList)
 
     with open('changedCode.txt', 'r') as fp:
         files = set()
@@ -92,22 +86,27 @@ def redrawMappings():
 
 
 def main():
-    # 2 argument inputs that specify the 2 execution modes --mode redraw mappings or test selection
-    # if redraw mappings, call diff lines function and get list of file names
-    # if test selection, call wrapper.sh, and parse database, get list of test names
-    parser = argparse.ArgumentParser(description='Pass arguments that specify test selection or redraw mapping.')
-    parser.add_argument("-m", "--mode", help="execution mode to run (test selection or redraw mappings)")
+    # 2 argument inputs that specify the execution mode (--mode testselection or redrawmappings) and
+    #   the repository name
+    # if mode == redraw mappings, call diff lines function and get list of file names
+    # if mode == test selection, call wrapper.sh, and parse database, get list of test names
+    parser = argparse.ArgumentParser(description='Pass arguments that specify the repository name and execution mode.')
+    parser.add_argument("-m", "--mode", help="execution mode to run (testselection or redrawmappings)")
+    parser.add_argument("-r", "--repoName", help="the name of the github repository")
     args = parser.parse_args()
-    if((args.mode) is None):
-        print("Please enter an execution mode to run (TESTSELECTION or REDRAWMAPPINGS)")
+    if((args.repoName) is None):
+        print("Please enter the name of the repository")
     else:
-        mode = (args.mode).lower()
-        if(mode == "testselection"):
-            testSelection()
-        elif(mode == "redrawmappings"):
-            redrawMappings()
+        if((args.mode) is None):
+            print("Please enter an execution mode to run (TESTSELECTION or REDRAWMAPPINGS)")
         else:
-            print("invalid argument")
+            mode = (args.mode).lower()
+            if(mode == "testselection"):
+                testSelection(repo = args.repoName)
+            elif(mode == "redrawmappings"):
+                redrawMappings(repo = args.repoName)
+            else:
+                print("invalid argument")
 
 if __name__ == "__main__":
     main()

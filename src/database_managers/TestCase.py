@@ -28,6 +28,24 @@ class TestCase():
 
     db.query(query)
 
+  # This should probably be fixed to return actual info
+  # Just returning something so I can tell in test to source if it exists
+  def get_mapping(self, function):
+    if not function or not function.functionID:
+      return
+
+    db = Database.getInstance()
+    query = "select * from RCodeToTestCases \
+            where functionID = {} and \
+            testCaseID = {} \
+            ;".format(function.functionID, self.testCaseID)
+
+    results = db.query(query)
+    if results and len(results) > 0:
+        return results
+    else:
+        return None
+
   def delete_mapping(self, function):
     if not function or not function.functionID:
       return
