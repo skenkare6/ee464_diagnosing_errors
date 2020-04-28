@@ -5,8 +5,12 @@ import pymysql.cursors
 import argparse
 from pyparsing import nestedExpr
 import time
+import sys, os
 
-db = pymysql.connect(host = "localhost", database = 'test', user = "root", passwd = "S4ang4ai!")
+# For now, pull in the ORM classes
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../../src/database_managers')))
+from Repository import Repository
+from Function import Function
 
 def testSelection(repo):
     # get function names from git diff into changedCode.txt
@@ -14,14 +18,13 @@ def testSelection(repo):
     # parse changedFunctions.txt
     # go to database and find tests that match function names
     # output test names into JSON object
-    cur = db.cursor()
-    sql = ("SELECT path FROM Repositories WHERE path = %s;")
-    cur.execute(sql, repo);
-    result = cur.fetchall()
+    result = Repository.get_by_path(repo)
+
     if not result:
-        print("Incorrect repository name. Please specify a correct repository name, or add %s to the database." % repo)
-        return;
-    subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + repo], shell=True)
+        print("No repository has been added to the database. Please specify a database, or call redrawmappings, before moving forward.")
+        exit(1)
+
+    subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + result.path], shell=True)
 
     functionList = dict()
     testList = dict()
@@ -31,61 +34,45 @@ def testSelection(repo):
             line = line.strip()
             funcs.add(line)
         functionList['changedFunctions'] = funcs
-        fp.close()
 
     with open('changedCode.txt', 'r') as fp:
-        sql = ("SELECT * FROM RFunctions;")  # can we assume that if RFunction is populated than the other are as well?
-        cur.execute(sql)
-        r1 = cur.fetchall()
-        if not r1:
+        functions = Function.get_all()
+
+        if not functions or len(functions) == 0:
             print("No mappings in the database, calling redrawmappings...")
             redrawMappings()
-            return;
+            exit(1)
 
-        tests = set()
-        for line in fp.readlines():
-            line = line.strip()
-            
-            sql = ("SELECT functionID FROM RFunctions WHERE functionName = %s;")
-            cur.execute(sql, (line))
-            result = cur.fetchall()
-            if not result:
-                print("Function %s is not mapped in the database, calling redrawmappings..." % (line))
+        tests = list()
+        for functionName in fp.readlines():
+            functionName = functionName.strip()
+            function = Function.get_by_name(functionName)
+
+            if not function:
+                print("Function %s is not mapped in the database, calling redrawmappings..." % (functionName))
                 redrawMappings()
-                return;
-            result = result[0][0]
+                exit(1)
 
-            sql = "SELECT testCaseID FROM RCodeToTestCases WHERE functionID = '%s';"
-            cur.execute(sql, result)
-            result = cur.fetchall()
-            result = result[0][0]
+            tests.extend(function.testCaseNames)
+        testList['testToRun'] = set(tests)
 
-            sql = "SELECT testCaseName FROM RTestCases WHERE testCaseID = '%s';"
-            cur.execute(sql, result)
-            result = cur.fetchall()
-            result = result[0][0]
-            tests.add(result)
-        testList['testToRun'] = tests
-        fp.close()
-    cur.close()
     print(functionList)
-    print(testList)    
-    db.close()
-    
+    print(testList)
+
 def redrawMappings(repo):
     # call DiffLinesFunction.sh
     # output file names into JSON object
-    cur = db.cursor()
-    
-    sql = ("SELECT path FROM Repositories WHERE path = %s;")
-    cur.execute(sql, repo)
-    result = cur.fetchall()
-    if not result:
-        print("Incorrect repository name. Please specify a correct repository name, or add %s to the database." % repo)
-        return
+    repo = Repository.get_by_path(repo)
+
+    if not repo:
+        print("No repository has been added to the database. Please specify a database before moving forward.")
+        exit(1)
 
     fileList = dict()
-    subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + repo], shell=True)
+    subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + repo.path], shell=True)
+
+    # print(testList)
+
     with open('changedCode.txt', 'r') as fp:
         files = set()
         for line in fp.readlines():
@@ -94,12 +81,13 @@ def redrawMappings(repo):
             #print(lines[0])
         fileList['filesToMap'] = files
         fp.close()
+
     print(fileList) # *** call test-to-source from here ***
 
 
 def main():
-    # 2 argument inputs that specify the execution mode (--mode testselection or redrawmappings) and  
-    #   the repository name 
+    # 2 argument inputs that specify the execution mode (--mode testselection or redrawmappings) and
+    #   the repository name
     # if mode == redraw mappings, call diff lines function and get list of file names
     # if mode == test selection, call wrapper.sh, and parse database, get list of test names
     parser = argparse.ArgumentParser(description='Pass arguments that specify the repository name and execution mode.')
@@ -111,7 +99,7 @@ def main():
     else:
         if((args.mode) is None):
             print("Please enter an execution mode to run (TESTSELECTION or REDRAWMAPPINGS)")
-        else:        
+        else:
             mode = (args.mode).lower()
             if(mode == "testselection"):
                 testSelection(repo = args.repoName)
@@ -119,9 +107,6 @@ def main():
                 redrawMappings(repo = args.repoName)
             else:
                 print("invalid argument")
-
-
-
 
 if __name__ == "__main__":
     main()

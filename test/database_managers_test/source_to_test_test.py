@@ -17,3 +17,4 @@ def test_gets_json(with_database):
 
   tests = set(json_report.get('one.r').get('tests'))
   assert tests == set(['first_test', 'second_test'])
+

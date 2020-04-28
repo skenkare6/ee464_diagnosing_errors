@@ -57,3 +57,11 @@ class Function():
 
       result = db.query(query)
       return Function.get_by_name(functionName)
+
+    @staticmethod
+    def get_all():
+      db = Database.getInstance()
+      query = "select RFunctions.functionName from RFunctions;"
+      results = db.query(query)
+      results = [Function.get_by_name(r['functionName']) for r in results]
+      return results

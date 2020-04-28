@@ -10,6 +10,12 @@ class Repository():
         self.repositoryID = repositoryID
         self.path = path
 
+    def __str__(self):
+      return str(self.__dict__)
+
+    def __repr__(self):
+      return str(self.__dict__)
+
     @staticmethod
     def get_by_repositoryID(repositoryID):
         db = Database.getInstance()
@@ -47,3 +53,10 @@ class Repository():
         # TODO: check if query was successful?
         result = db.query(query)
         return Repository.get_by_path(path)
+
+    @staticmethod
+    def get_all():
+      db = Database.getInstance()
+      query = "select * from Repositories;"
+      results = db.query(query)
+      return [Repository(repo.get('repositoryID', None), repo.get('path', None)) for repo in results]

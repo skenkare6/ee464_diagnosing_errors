@@ -53,3 +53,9 @@ def test_get_by_name_and_file_id_returns_first_if_multiple_same_name(with_databa
   duplicate = Function.create("doMath", file.fileID)
 
   assert duplicate.functionID == first.functionID
+
+def test_get_all(with_database):
+  storedFunctions = Function.get_all()
+  names = set([func.name for func in storedFunctions])
+
+  assert set(["doMath", "doSomeMoreMath", "doOtherMath"]) == names
