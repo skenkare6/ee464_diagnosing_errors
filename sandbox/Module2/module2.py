@@ -43,7 +43,7 @@ def testSelection(repo):
             redrawMappings()
             exit(1)
 
-        tests = set()
+        tests = list()
         for functionName in fp.readlines():
             functionName = functionName.strip()
             function = Function.get_by_name(functionName)
@@ -53,8 +53,8 @@ def testSelection(repo):
                 redrawMappings()
                 exit(1)
 
-            tests.add(function.testCaseNames)
-        testList['testToRun'] = tests
+            tests.extend(function.testCaseNames)
+        testList['testToRun'] = set(tests)
 
     print(functionList)
     print(testList)
@@ -71,7 +71,7 @@ def redrawMappings(repo):
     fileList = dict()
     subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + repo.path], shell=True)
 
-    print(testList)
+    # print(testList)
 
     with open('changedCode.txt', 'r') as fp:
         files = set()
