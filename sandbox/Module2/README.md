@@ -1,6 +1,7 @@
 Command to run module 2:
->> python3 module2.py --mode \<execution mode\>
+>> python3 module2.py -r \<repository name\> --mode \<execution mode\>
 
+The repository name is the name of the github repository we are testing
 The execution mode options are testselection or redrawmappings
 
 Things to do:

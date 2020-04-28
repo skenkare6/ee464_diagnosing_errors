@@ -8,21 +8,20 @@ import time
 
 db = pymysql.connect(host = "localhost", database = 'test', user = "root", passwd = "S4ang4ai!")
 
-def testSelection():
+def testSelection(repo):
     # get function names from git diff into changedCode.txt
     # check to see if repository is in database, if not, then exit (depends on when repository will be added)
     # parse changedFunctions.txt
     # go to database and find tests that match function names
     # output test names into JSON object
     cur = db.cursor()
-    sql = ("SELECT path FROM Repositories;")
-    cur.execute(sql);
+    sql = ("SELECT path FROM Repositories WHERE path = %s;")
+    cur.execute(sql, repo);
     result = cur.fetchall()
     if not result:
-        print("No repository has been added to the database. Please specify a database, or call redrawmappings, before moving forward.")
-        exit(0)
-    result = result[0][0]
-    subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + result], shell=True)
+        print("Incorrect repository name. Please specify a correct repository name, or add %s to the database." % repo)
+        return;
+    subprocess.call(['./getCodeChanges.sh testselection'+ ' ' + repo], shell=True)
 
     functionList = dict()
     testList = dict()
@@ -41,7 +40,7 @@ def testSelection():
         if not r1:
             print("No mappings in the database, calling redrawmappings...")
             redrawMappings()
-            exit(0)
+            return;
 
         tests = set()
         for line in fp.readlines():
@@ -53,7 +52,7 @@ def testSelection():
             if not result:
                 print("Function %s is not mapped in the database, calling redrawmappings..." % (line))
                 redrawMappings()
-                exit(0)
+                return;
             result = result[0][0]
 
             sql = "SELECT testCaseID FROM RCodeToTestCases WHERE functionID = '%s';"
@@ -73,21 +72,20 @@ def testSelection():
     print(testList)    
     db.close()
     
-def redrawMappings():
+def redrawMappings(repo):
     # call DiffLinesFunction.sh
     # output file names into JSON object
     cur = db.cursor()
-
-    sql = ("SELECT path FROM Repositories;")    # assuming that there will be at least one initial mapping before redrawmappings is called
-    cur.execute(sql);
+    
+    sql = ("SELECT path FROM Repositories WHERE path = %s;")
+    cur.execute(sql, repo)
     result = cur.fetchall()
-    result = result[0][0]
     if not result:
-        print("No repository has been added to the database. Please specify a database before moving forward.")
-        exit(0)
+        print("Incorrect repository name. Please specify a correct repository name, or add %s to the database." % repo)
+        return
 
     fileList = dict()
-    subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + result], shell=True)
+    subprocess.call(['./getCodeChanges.sh redrawmappings'+ ' ' + repo], shell=True)
     with open('changedCode.txt', 'r') as fp:
         files = set()
         for line in fp.readlines():
@@ -100,22 +98,27 @@ def redrawMappings():
 
 
 def main():
-    # 2 argument inputs that specify the 2 execution modes --mode redraw mappings or test selection
-    # if redraw mappings, call diff lines function and get list of file names
-    # if test selection, call wrapper.sh, and parse database, get list of test names
-    parser = argparse.ArgumentParser(description='Pass arguments that specify test selection or redraw mapping.')
-    parser.add_argument("-m", "--mode", help="execution mode to run (test selection or redraw mappings)")
+    # 2 argument inputs that specify the execution mode (--mode testselection or redrawmappings) and  
+    #   the repository name 
+    # if mode == redraw mappings, call diff lines function and get list of file names
+    # if mode == test selection, call wrapper.sh, and parse database, get list of test names
+    parser = argparse.ArgumentParser(description='Pass arguments that specify the repository name and execution mode.')
+    parser.add_argument("-m", "--mode", help="execution mode to run (testselection or redrawmappings)")
+    parser.add_argument("-r", "--repoName", help="the name of the github repository")
     args = parser.parse_args()
-    if((args.mode) is None):
-        print("Please enter an execution mode to run (TESTSELECTION or REDRAWMAPPINGS)")
-    else:        
-        mode = (args.mode).lower()
-        if(mode == "testselection"):
-            testSelection()
-        elif(mode == "redrawmappings"):
-            redrawMappings()
-        else:
-            print("invalid argument")
+    if((args.repoName) is None):
+        print("Please enter the name of the repository")
+    else:
+        if((args.mode) is None):
+            print("Please enter an execution mode to run (TESTSELECTION or REDRAWMAPPINGS)")
+        else:        
+            mode = (args.mode).lower()
+            if(mode == "testselection"):
+                testSelection(repo = args.repoName)
+            elif(mode == "redrawmappings"):
+                redrawMappings(repo = args.repoName)
+            else:
+                print("invalid argument")
 
 
 
