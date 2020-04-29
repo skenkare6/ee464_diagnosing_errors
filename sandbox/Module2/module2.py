@@ -82,7 +82,9 @@ def redrawMappings(repo):
         fileList['filesToMap'] = files
         fp.close()
 
-    print(fileList) # *** call test-to-source from here ***
+    # print(fileList) # *** call test-to-source from here ***
+    for f in fileList['filesToMap']:
+        print(f)
 
 
 def main():
