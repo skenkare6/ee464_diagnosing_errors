@@ -1,14 +1,23 @@
 # ee464_diagnosing_errors
 
+## Contents of the repo
+* `MySQL_Scripts` contains scripts for setting up MySQL
+* `env` is a python virtual environment. This isn't fully set up, so you
+  might not want to use this yet.
+* `reports` contains all of our written reports for our Senior Design
+  class. The report `i5_EE464FinalReport.pdf` is our final report that
+  documents our work on this project.
+* `sandbox` currently contains scratch code and our code for the testing
+  harness, test-to-source tool, and diffs-in-code tool. Ideally,
+  everything that is not scratch would be moved to `src`.
+* `src` contains our source code
+* `test` contains our source code's tests.
+* Other misc. files: `Docker` files and convenience scripts for `MySQL`.
+
 ## TODO
 
-* Add test case description to RTestCase in database
-* Put in testFile name and get back all of the testcases inside of the testfile
-* Use path in repository table to set Rscript working directories
-* Move modules 1 and 2 into src/ directory of our repo
-* Unhardcode anomalydetection from everywhere
-* Test harness
-* Stretch goal: Test and refactor modules
+* Add test case description to `RTestCase` in database
+* Move modules 1 and 2 into `src/` directory of our repo
 
 ## Getting started
 ### Setting up the MySQL databases
@@ -52,26 +61,3 @@ Solution:
   * pymysql
   * pytest-3
 
-## Design from 2020-02-05 meeting
-
-* Database
-* COVR vs foodweb/callgraphs
-* Teams
-  * As previously defined in the System Design Report
-  * Test-to-source
-    * Canyon
-    * Saarila
-  * Git diffs/regression test selection
-    * Janvi
-    * John
-  * Source-to-test
-    * Jennings
-    * Michael
-* Output
-  * Will decide later down the road, maybe with Kevin?
-  * For now, here is an example of some formatted text we agreed upon:
-
-```
-function1: test1,test2,test3
-function2: test2,test4,test5
-```
